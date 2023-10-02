@@ -2,7 +2,7 @@
 extends EditorPlugin
 
 func _enter_tree():
-	pass
+	add_autoload_singleton("CommandServer", "res://addons/command-terminal/src/CommandServer.gd")
 
 func _exit_tree():
-	pass
+	remove_autoload_singleton(name)
