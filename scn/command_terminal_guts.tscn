@@ -1,14 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://b5b8i4p40f5ua"]
+[gd_scene load_steps=3 format=3 uid="uid://b5b8i4p40f5ua"]
 
 [ext_resource type="Script" path="res://addons/command-terminal/src/CommandTerminalGuts.gd" id="1_sqh1w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3nmgc"]
-bg_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b3gvj"]
-bg_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oh68q"]
 bg_color = Color(0, 0, 0, 1)
 
 [node name="__guts__" type="PanelContainer"]
@@ -35,7 +29,6 @@ offset_top = -62.0
 offset_right = 459.0
 offset_bottom = -35.0
 grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_b3gvj")
 
 [node name="MarginContainer" type="MarginContainer" parent="AutofillControl/AutofillPanel"]
 layout_mode = 2
@@ -45,6 +38,7 @@ theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
 [node name="AutofillRichLabel" type="RichTextLabel" parent="AutofillControl/AutofillPanel/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
 text = "1234567891011121314151617181920212223242526272829"
@@ -62,7 +56,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_oh68q")
 
 [node name="RichTextLabelMargins" type="MarginContainer" parent="TerminalControl/TerminalPanel"]
 layout_mode = 2
@@ -79,7 +72,12 @@ fit_content = true
 [node name="TerminalLineEdit" type="LineEdit" parent="TerminalControl/TerminalPanel"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 0)
 text = "1234567891011121314151617181920212223242526272829"
+context_menu_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+selecting_enabled = false
 flat = true
 caret_blink = true
 caret_blink_interval = 0.5

@@ -1,5 +1,5 @@
 @icon("res://addons/command-terminal/CommandTerminal.svg")
-class_name CommandTerminal 
+#class_name CommandTerminal 
 extends PanelContainer
 ## A brief description of the class's role and functionality.
 
