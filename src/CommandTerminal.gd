@@ -44,19 +44,19 @@ func _handle_editor_properties():
 		guts.get_node("%TerminalPanel").remove_theme_stylebox_override("panel")
 	
 	if font_size:
-		guts.get_node("%AutofillRichLabel").add_theme_font_size_override("normal_font_size", font_size)
-		guts.get_node("%TerminalRichLabel").add_theme_font_size_override("normal_font_size", font_size)
-		guts.get_node("%TerminalLineEdit").add_theme_font_size_override("font_size", font_size)
+		guts.get_node("%AUTOFILL-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)
+		guts.get_node("%TERMINAL-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)
+		guts.get_node("%TERMINAL-LINE-EDIT").add_theme_font_size_override("font_size", font_size)
 	else:
-		guts.get_node("%AutofillRichLabel").remove_theme_font_size_override("normal_font_size")
-		guts.get_node("%TerminalRichLabel").remove_theme_font_size_override("normal_font_size")
-		guts.get_node("%TerminalLineEdit").remove_theme_font_size_override("font_size")
+		guts.get_node("%AUTOFILL-RICH-LABEL").remove_theme_font_size_override("normal_font_size")
+		guts.get_node("%TERMINAL-RICH-LABEL").remove_theme_font_size_override("normal_font_size")
+		guts.get_node("%TERMINAL-LINE-EDIT").remove_theme_font_size_override("font_size")
 		
 	if font:
-		guts.get_node("%AutofillRichLabel").add_theme_font_override("normal_font", font)
-		guts.get_node("%TerminalRichLabel").add_theme_font_override("normal_font", font)
-		guts.get_node("%TerminalLineEdit").add_theme_font_override("font", font)
+		guts.get_node("%AUTOFILL-RICH-LABEL").add_theme_font_override("normal_font", font)
+		guts.get_node("%TERMINAL-RICH-LABEL").add_theme_font_override("normal_font", font)
+		guts.get_node("%TERMINAL-LINE-EDIT").add_theme_font_override("font", font)
 	else:
-		guts.get_node("%AutofillRichLabel").remove_theme_font_override("normal_font")
-		guts.get_node("%TerminalRichLabel").remove_theme_font_override("normal_font")
-		guts.get_node("%TerminalLineEdit").remove_theme_font_override("font")
+		guts.get_node("%AUTOFILL-RICH-LABEL").remove_theme_font_override("normal_font")
+		guts.get_node("%TERMINAL-RICH-LABEL").remove_theme_font_override("normal_font")
+		guts.get_node("%TERMINAL-LINE-EDIT").remove_theme_font_override("font")

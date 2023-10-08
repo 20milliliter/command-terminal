@@ -1,18 +1,15 @@
 class_name CommandBuilder
 
-var root : ArgumentNode = null
+var root : ArgumentGraph = ArgumentGraph.new()
 var optional : bool = false
 
-var upcoming_parents : Array[ArgumentNode]
+var upcoming_parents : Array[ArgumentNode] = [root]
 
 var writing_branches : bool = false
 var branch_stack : Array[Array]
 
 func add(node : ArgumentNode):
-	if root == null:
-		root = node
-	else:
-		node.reparent(upcoming_parents)
+	node.reparent(upcoming_parents)
 	upcoming_parents = [node]
 
 func Literal(_literal : StringName) -> CommandBuilder:
@@ -23,7 +20,7 @@ func Variadic() -> CommandBuilder:
 	self.add(ArgumentNode.new(VariadicArgument.new()))
 	return self
 
-func Key(_key : StringName, _validator : Callable = Callable()) -> CommandBuilder:
+func Validated(_key : StringName, _validator : Callable = Callable()) -> CommandBuilder:
 	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator)))
 	return self
 
@@ -33,6 +30,11 @@ func Branch() -> CommandBuilder:
 		_start_branch()
 	else:
 		_next_branch()
+	return self
+
+func Callback(_callback : Callable) -> CommandBuilder:
+	for node in upcoming_parents:
+		node.callback = _callback
 	return self
 
 func _start_branch():
@@ -51,24 +53,4 @@ func Optional() -> CommandBuilder:
 	return self
 
 func Build() -> ArgumentGraph:
-	return ArgumentGraph.new(root)
-
-static func test():
-	CommandServer.register_command(
-		CommandBuilder.new().Literal("dmx").Literal("override").Literal("clear").Build()
-	)
-	CommandServer.register_command(
-		CommandBuilder.new()
-			.Literal("dmx")
-			.Literal("override")
-				.Branch().Literal("channel")
-				.Branch().Literal("universe")
-			.EndBranch()
-				.Branch().Key("<index>")
-				.Branch().Literal("range").Key("<start_index>").Key("<end_index>")
-			.EndBranch()
-				.Branch().Key("<value>")
-				.Branch().Literal("pattern").Key("<pattern_name>").Variadic()
-			.EndBranch()
-		.Build()
-	)
+	return root

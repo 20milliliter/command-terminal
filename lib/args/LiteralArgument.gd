@@ -7,9 +7,12 @@ func _init(_literal : StringName, _optional = false):
 	literal = _literal
 	super(_optional)
 
-func is_equal(argument : Argument):
+func _to_string() -> String:
+	return "LiteralArgument(%s)" % [literal]
+
+func is_equal(argument : Argument) -> bool:
 	if not argument is LiteralArgument: return false
-	return argument.literal == self.literal
+	return argument.literal.to_lower() == self.literal.to_lower()
 
 func is_valid(_input) -> bool: 
 	return _input == literal
