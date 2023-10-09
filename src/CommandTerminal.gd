@@ -34,14 +34,14 @@ func _first_time_setup():
 
 func _handle_editor_properties():
 	if autofill_panel_styling:
-		guts.get_node("%AutofillPanel").add_theme_stylebox_override("panel", autofill_panel_styling)
+		guts.get_node("%AUTOFILL-PANEL").add_theme_stylebox_override("panel", autofill_panel_styling)
 	else:
-		guts.get_node("%AutofillPanel").remove_theme_stylebox_override("panel")
+		guts.get_node("%AUTOFILL-PANEL").remove_theme_stylebox_override("panel")
 
 	if terminal_panel_styling:
-		guts.get_node("%TerminalPanel").add_theme_stylebox_override("panel", terminal_panel_styling)
+		guts.get_node("%TERMINAL-PANEL").add_theme_stylebox_override("panel", terminal_panel_styling)
 	else:
-		guts.get_node("%TerminalPanel").remove_theme_stylebox_override("panel")
+		guts.get_node("%TERMINAL-PANEL").remove_theme_stylebox_override("panel")
 	
 	if font_size:
 		guts.get_node("%AUTOFILL-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)

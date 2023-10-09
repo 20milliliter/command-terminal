@@ -12,6 +12,9 @@ func _init(_key : StringName, _optional = false, _validator : Callable = Callabl
 func _to_string() -> String:
 	return "ValidatedArgument(<%s>)" % [key]
 
+func get_autofill_entry() -> String:
+	return "<%s>" % [key]
+
 func is_equal(argument : Argument):
 	if not argument is ValidatedArgument: return false
 	return argument.key == self.key and argument.validator == self.validator

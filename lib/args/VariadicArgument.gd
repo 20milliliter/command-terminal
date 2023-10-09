@@ -14,4 +14,4 @@ func is_valid(_input) -> bool:
 	return true
 
 func is_autofill_candidate(_input) -> bool:
-	return true
+	return false

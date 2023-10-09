@@ -11,12 +11,9 @@ func register_command(_argument_graph : ArgumentGraph):
 var current_command : String
 var current_arg : String
 
-func run_command(command : String):
-	current_command = command
-	var args = command.split(" ", false)
-	print("[COMMAND] Running command '%s'" % [args])
+func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
 	var graph_nav : ArgumentNode = argument_graph
-	print("[COMMAND TERMINAL] Navigating with arguments '%s'" % [args])
+	print("[COMMAND_NAV] Navigating with arguments '%s'" % [args])
 	for arg in args:
 		current_arg = arg
 		print("[COMMAND TERMINAL][NAVIGATION] Navigating with target argument '%s'" % [arg])
@@ -34,6 +31,39 @@ func run_command(command : String):
 			print("[COMMAND TERMINAL][NAVIGATION] No valid child found. Aborting.")
 			return
 	return graph_nav
+
+func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
+	print("[COMMAND_NAV] Navigating to most recent callback.")
+	while len(node.parents) > 0:
+		if not node.callback.is_null():
+			print("[COMMAND_NAV] Callback found.")
+			return node.callback
+		node = node.parents[0]
+		print("[COMMAND_NAV] Navigating to parent '%s'" % [node] )
+	print("[COMMAND_NAV] No callback found.")
+	return Callable()
+
+func get_autofill_candidates(current_text) -> Array[String]:
+	var args = current_text.split(" ", false)
+	var current_node : ArgumentNode = _navigate_argument_graph(args.slice(0, -1))
+	var candidates : Array[String] = []
+	for child in current_node.children:
+		if child.argument.is_autofill_candidate(args[-1]):
+			candidates.append(child.argument.get_autofill_entry())
+	return candidates
+
+func run_command(command : String):
+	current_command = command
+	var args = command.split(" ", false)
+	print("[COMMAND] Running command '%s'" % [args])
+	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
+	print("[COMMAND] Locating callable.")
+	var callback = _navigate_to_most_recent_callback(graph_nav)
+	if callback.is_null():
+		print("[COMMAND] No callback found. Aborting.")
+	else:
+		print("[COMMAND] Executing command...")
+		callback.call(args)
 
 func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 	print("[COMMAND TERMINAL][NAVIGATION] Navigating to most recent callback.")

@@ -60,7 +60,7 @@ func update_autofill_content():
 			autofill_text.append_text(entry)
 		autofill_text.append_text("\n")
 	
-@onready var command_line_font : Font = command_line.get("theme_override_fonts/normal_font")
+@onready var command_line_font : Font = self.get_parent().font
 @onready var command_line_font_size : int = command_line.get("theme_override_font_sizes/normal_font_size")
 @onready var margin_container : MarginContainer = autofill_menu_panel.get_node("MarginContainer") 
 @onready var margins = margin_container.get_theme_constant("margin_left") + margin_container.get_theme_constant("margin_right") 

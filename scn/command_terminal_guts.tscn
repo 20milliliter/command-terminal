@@ -9,7 +9,7 @@ bg_color = Color(0, 0, 0, 1)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 665.0
+offset_top = 1048.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_3nmgc")
@@ -18,9 +18,8 @@ script = ExtResource("1_monnh")
 [node name="AutofillControl" type="Control" parent="."]
 layout_mode = 2
 
-[node name="AutofillPanel" type="PanelContainer" parent="AutofillControl"]
+[node name="AUTOFILL-PANEL" type="PanelContainer" parent="AutofillControl"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -30,14 +29,14 @@ offset_right = 459.0
 offset_bottom = -35.0
 grow_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="AutofillControl/AutofillPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="AutofillControl/AUTOFILL-PANEL"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="AUTOFILL-RICH-LABEL" type="RichTextLabel" parent="AutofillControl/AutofillPanel/MarginContainer"]
+[node name="AUTOFILL-RICH-LABEL" type="RichTextLabel" parent="AutofillControl/AUTOFILL-PANEL/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
@@ -48,7 +47,7 @@ fit_content = true
 clip_contents = true
 layout_mode = 2
 
-[node name="TerminalPanel" type="PanelContainer" parent="TerminalControl"]
+[node name="TERMINAL-PANEL" type="PanelContainer" parent="TerminalControl"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -57,11 +56,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="RichTextLabelMargins" type="MarginContainer" parent="TerminalControl/TerminalPanel"]
+[node name="RichTextLabelMargins" type="MarginContainer" parent="TerminalControl/TERMINAL-PANEL"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 
-[node name="TERMINAL-RICH-LABEL" type="RichTextLabel" parent="TerminalControl/TerminalPanel/RichTextLabelMargins"]
+[node name="TERMINAL-RICH-LABEL" type="RichTextLabel" parent="TerminalControl/TERMINAL-PANEL/RichTextLabelMargins"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
@@ -69,7 +68,7 @@ bbcode_enabled = true
 text = "1234567891011121314151617181920212223242526272829"
 fit_content = true
 
-[node name="TERMINAL-LINE-EDIT" type="LineEdit" parent="TerminalControl/TerminalPanel"]
+[node name="TERMINAL-LINE-EDIT" type="LineEdit" parent="TerminalControl/TERMINAL-PANEL"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 0)
