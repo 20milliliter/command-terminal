@@ -1,6 +1,9 @@
 class_name ArgumentGraph
 extends ArgumentNode
 
+func _to_string() -> String:
+	return "ArgumentGraphRoot"
+
 func _init(child : ArgumentNode = null):
 	if not child == null:
 		children.append(child)

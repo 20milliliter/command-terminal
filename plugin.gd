@@ -1,5 +1,4 @@
 @tool
-class_name CommandTerminalPlugin
 extends EditorPlugin
 
 var _console_key: InputEventKey = preload("res://addons/command-terminal/ast/default_console_key.tres").duplicate()
@@ -14,14 +13,16 @@ func _enable_plugin():
 	_set_setting_info({
 		"name" : CONSOLE_KEY_SHORTCUT,
 		"type" : TYPE_OBJECT,
+		"description" : "The InputEvent to be associated with the 'ui_console' input action."
 	})
 	_set_setting_basic(CONSOLE_KEY_SHORTCUT, true)
-	print("[COMMAND TERMINAL][PLUGIN] CommandTerminal plugin enabled.")
+	print("[COMMAND-TERMINAL][PLUGIN] CommandTerminal plugin enabled.")
 	
 func _disable_plugin():
 	remove_autoload_singleton("CommandServer")
 	_set_setting_or_default(CONSOLE_KEY_SHORTCUT, null)
-	print("[COMMAND TERMINAL][PLUGIN] CommandTerminal plugin disabled.")
+	print(ProjectSettings.has_setting(CONSOLE_KEY_SHORTCUT))
+	print("[COMMAND-TERMINAL][PLUGIN] CommandTerminal plugin disabled.")
 		
 func _set_setting_or_default(setting_name: String, value: Variant) -> void:
 	if not ProjectSettings.has_setting(setting_name):

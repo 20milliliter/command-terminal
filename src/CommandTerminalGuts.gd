@@ -8,10 +8,10 @@ extends Node
 @onready var autofill_panel : PanelContainer = $"%AUTOFILL-PANEL"
 
 func _ready():
-	var _console_key = ProjectSettings.get_setting(CommandTerminalPlugin.CONSOLE_KEY_SHORTCUT)
+	var _console_key = ProjectSettings.get_setting("plugins/command_terminal/console_key_shortcut").duplicate()
 	InputMap.add_action("ui_console")
 	InputMap.action_add_event("ui_console", _console_key)
-	print("[COMMAND TERMINAL][TERMINAL] Registered 'ui_console' to InputMap")
+	print("[COMMAND-TERMINAL][TERMINAL] Registered 'ui_console' to InputMap")
 
 	terminal_line_edit.text_changed.connect(on_line_edit_new_text)
 	terminal_line_edit.text_submitted.connect(run_command)
