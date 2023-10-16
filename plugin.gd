@@ -15,10 +15,14 @@ func _enable_plugin():
 		"name" : CONSOLE_KEY_SHORTCUT,
 		"type" : TYPE_OBJECT,
 	})
-
+	_set_setting_basic(CONSOLE_KEY_SHORTCUT, true)
+	print("[COMMAND TERMINAL][PLUGIN] CommandTerminal plugin enabled.")
+	
 func _disable_plugin():
 	remove_autoload_singleton("CommandServer")
-
+	_set_setting_or_default(CONSOLE_KEY_SHORTCUT, null)
+	print("[COMMAND TERMINAL][PLUGIN] CommandTerminal plugin disabled.")
+		
 func _set_setting_or_default(setting_name: String, value: Variant) -> void:
 	if not ProjectSettings.has_setting(setting_name):
 		ProjectSettings.set_setting(setting_name, value)
@@ -26,5 +30,8 @@ func _set_setting_or_default(setting_name: String, value: Variant) -> void:
 
 func _set_setting_info(info: Dictionary) -> void:
 	ProjectSettings.add_property_info(info)
+
+func _set_setting_basic(setting_name : String, basic : bool) -> void:
+	ProjectSettings.set_as_basic(setting_name, basic)
 
 
