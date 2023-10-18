@@ -1,4 +1,4 @@
-class_name UICommandTerminalAutofillPanel
+#class_name UICommandTerminalAutofillPanel
 extends Control
 
 @export var command_line_entry : LineEdit

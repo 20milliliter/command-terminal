@@ -1,4 +1,4 @@
-class_name CommandTerminalGuts
+#class_name CommandTerminalGuts
 extends Node
 
 @onready var command_terminal_node : CommandTerminal = self.get_parent()

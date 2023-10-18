@@ -33,6 +33,8 @@ func _set_setting_info(info: Dictionary) -> void:
 	ProjectSettings.add_property_info(info)
 
 func _set_setting_basic(setting_name : String, basic : bool) -> void:
-	ProjectSettings.set_as_basic(setting_name, basic)
+	var version = Engine.get_version_info()
+	if version["major"] >= 4 and version["minor"] >= 1:
+		ProjectSettings.call("set_as_basic", setting_name, basic)
 
 

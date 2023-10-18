@@ -1,6 +1,7 @@
 @icon("res://addons/command-terminal/ast/CommandTerminal.svg")
 @tool
-class_name CommandTerminal 
+## Control that implements UI access to the CommandTerminal plugin's CommandServer, allowing for entering and running commands
+class_name CommandTerminal
 extends Control
 
 @export_group("Font")
