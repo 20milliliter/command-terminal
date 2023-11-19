@@ -35,7 +35,7 @@ func update_commandline_content(new_text : String):
 	command_line.text = text 
 
 func process_command(command : String):
-	print(command)
+	print_rich(command)
 	command_line.text = ""
 	command_line_entry.text = ""
 	command_line_entry.release_focus()

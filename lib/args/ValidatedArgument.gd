@@ -10,7 +10,7 @@ func _init(_key : StringName, _optional = false, _validator : Callable = Callabl
 	super()
 
 func _to_string() -> String:
-	return "ValidatedArgument(<%s>)" % [key]
+	return "<%s>" % [key]
 
 func get_autofill_entry() -> String:
 	return "<%s>" % [key]

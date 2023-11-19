@@ -8,7 +8,7 @@ func _init(_literal : StringName, _optional = false):
 	super(_optional)
 
 func _to_string() -> String:
-	return "LiteralArgument(%s)" % [literal]
+	return "%s" % [literal]
 
 func get_autofill_entry() -> String:
 	return literal

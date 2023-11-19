@@ -5,7 +5,7 @@ func _init():
 	super()
 
 func _to_string() -> String:
-	return "VariadicArgument()"
+	return "..."
 
 func is_equal(argument : Argument) -> bool:
 	return argument is VariadicArgument

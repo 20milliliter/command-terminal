@@ -5,7 +5,7 @@ class_name CommandTerminal
 extends Control
 
 @export_group("Font")
-@export var font : Font = preload("res://addons/command-terminal/ast/windows_command_prompt.ttf")
+@export var font : Font = load("res://addons/command-terminal/ast/windows_command_prompt.ttf")
 @export var font_size : int = 12
 
 @export_group("Theming")
@@ -14,10 +14,8 @@ extends Control
 
 var guts : Node
 
-func _enter_tree():
+func _process(_delta):
 	_first_time_setup()
-
-func _process(delta):
 	_handle_editor_properties()
 
 func _first_time_setup():
@@ -25,7 +23,7 @@ func _first_time_setup():
 		guts = self.get_node("__guts__")
 		return
 
-	var guts_scene : PackedScene = preload("res://addons/command-terminal/scn/command_terminal_guts.tscn")
+	var guts_scene : PackedScene = load("res://addons/command-terminal/scn/command_terminal_guts.tscn")
 	guts = guts_scene.instantiate()
 	self.add_child(guts)
 	guts.set_owner(get_tree().get_edited_scene_root())

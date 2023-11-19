@@ -1,28 +1,29 @@
 @tool
+class_name CommandTerminalPlugin
 extends EditorPlugin
 
-var _console_key: InputEventKey = preload("res://addons/command-terminal/ast/default_console_key.tres").duplicate()
-
-const PLUGIN_ID := "command_terminal"
-const PLUGIN_PATH := "plugins/" + PLUGIN_ID
-const CONSOLE_KEY_SHORTCUT := PLUGIN_PATH + "/console_key_shortcut"
+var data = CommandTerminalPluginData.new()
 
 func _enable_plugin():
 	add_autoload_singleton("CommandServer", "res://addons/command-terminal/src/CommandServer.gd")
-	_set_setting_or_default(CONSOLE_KEY_SHORTCUT, _console_key)
-	_set_setting_info({
-		"name" : CONSOLE_KEY_SHORTCUT,
-		"type" : TYPE_OBJECT,
-		"description" : "The InputEvent to be associated with the 'ui_console' input action."
-	})
-	_set_setting_basic(CONSOLE_KEY_SHORTCUT, true)
-	print("[COMMAND-TERMINAL][PLUGIN] CommandTerminal plugin enabled.")
-	
+	_handle_project_settings()
+	CommandTerminalLogger.log(0, ["PLUGIN"], "CommandTerminal plugin enabled.")
+	if not ProjectSettings.has_setting("plugins/command_terminal/console_key_shortcut"):
+		push_error("Somehow, the CommandTerminal plugin failed to initialize correctly. Please disable and reenable it.")
+
+func _handle_project_settings():
+	for project_setting_data in data.PROJECT_SETTINGS:
+		var project_setting = project_setting_data["name"]
+		_set_setting_or_default(project_setting, project_setting_data["default"])
+		_set_setting_info(project_setting_data)
+		_set_setting_basic(project_setting, true)
+		CommandTerminalLogger.log(2, ["PLUGIN"], "Registered plugin setting %s." % [project_setting])
+
 func _disable_plugin():
 	remove_autoload_singleton("CommandServer")
-	_set_setting_or_default(CONSOLE_KEY_SHORTCUT, null)
-	print(ProjectSettings.has_setting(CONSOLE_KEY_SHORTCUT))
-	print("[COMMAND-TERMINAL][PLUGIN] CommandTerminal plugin disabled.")
+	for project_setting_data in data.PROJECT_SETTINGS:
+		_set_setting_or_default(project_setting_data["name"], null)
+	CommandTerminalLogger.log(0, ["PLUGIN"], "CommandTerminal plugin disabled.")
 		
 func _set_setting_or_default(setting_name: String, value: Variant) -> void:
 	if not ProjectSettings.has_setting(setting_name):
@@ -36,5 +37,3 @@ func _set_setting_basic(setting_name : String, basic : bool) -> void:
 	var version = Engine.get_version_info()
 	if version["major"] >= 4 and version["minor"] >= 1:
 		ProjectSettings.call("set_as_basic", setting_name, basic)
-
-

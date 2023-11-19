@@ -4,7 +4,7 @@ extends Node
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 func register_command(_argument_graph : ArgumentGraph):
-	print("[COMMAND-TERMINAL] Attempting command registration")
+	CommandTerminalLogger.log(2, ["COMMAND"], "Registering command '%s'." % [_argument_graph.print_node_as_single()])
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
@@ -13,22 +13,22 @@ var current_arg : String
 
 func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
 	var graph_nav : ArgumentNode = argument_graph
-	print("[COMMAND-TERMINAL][NAVIGATION] Navigating with arguments '%s'" % [args])
+	CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Navigating with arguments '%s'" % [args]) 
 	for arg in args:
 		current_arg = arg
-		print("[COMMAND-TERMINAL][NAVIGATION] Navigating with target argument '%s'" % [arg])
+		CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Navigating with target argument '%s'" % [arg]) 
 		if len(graph_nav.children) == 0:
-			print("[COMMAND-TERMINAL][NAVIGATION] Command graph leaf reached. Proceeding...")
+			CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Command graph leaf reached. Proceeding...")
 			break
 		var valid_child_found : bool = false
 		for node in graph_nav.children:
 			if node.argument.is_valid(arg):
-				print("[COMMAND-TERMINAL][NAVIGATION] Found valid child: %s" % [node])
+				CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Found valid child: %s" % [node])
 				graph_nav = node
 				valid_child_found = true
 				break
 		if not valid_child_found:
-			print("[COMMAND-TERMINAL][NAVIGATION] No valid child found. Aborting.")
+			CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "No valid child found. Aborting.")
 			return
 	return graph_nav
 
@@ -42,26 +42,26 @@ func get_autofill_candidates(current_text) -> Array[String]:
 	return candidates
 
 func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
-	print("[COMMAND-TERMINAL][NAVIGATION] Navigating to most recent callback.")
+	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to most recent callback.")
 	while len(node.parents) > 0:
 		if not node.callback.is_null():
-			print("[COMMAND-TERMINAL][NAVIGATION] Callback found.")
+			CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Callback found.")
 			return node.callback
 		node = node.parents[0]
-		print("[COMMAND-TERMINAL][NAVIGATION] Navigating to parent '%s'" % [node] )
-	print("[COMMAND-TERMINAL][NAVIGATION] No callback found.")
+		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to parent '%s'" % [node] )
+		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
 	return Callable()
 
 func run_command(command : String):
 	current_command = command
 	var args = command.split(" ", false)
-	print("[COMMAND-TERMINAL] Running command '%s'" % [args])
+	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
 	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
 	if graph_nav == null: return
-	print("[COMMAND-TERMINAL] Locating callable.")
+	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
 	var callback = _navigate_to_most_recent_callback(graph_nav)
 	if callback.is_null(): return
-	print("[COMMAND-TERMINAL] Executing command...")
+	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
 	callback.call(args)
 
 var errors : Array[CommandError]

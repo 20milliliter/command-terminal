@@ -10,14 +10,11 @@ func _init(child : ArgumentNode = null):
 	super(null, Callable())
 
 func merge(source_tree : ArgumentGraph):
-	print("\n\n\nMerging.")
-	print("Target:")
-	self.print_node()
-	print("Source:")
-	source_tree.print_node()
+	CommandTerminalLogger.log(2, ["COMMAND"], "Executing an ArgumentGraph merge...")
+	CommandTerminalLogger.log(3, ["COMMAND"], "Existing:\n" + self.print_node())
+	CommandTerminalLogger.log(3, ["COMMAND"], "Source:\n" + source_tree.print_node_as_single())
 	merge_node(source_tree)
-	print("Result:")
-	self.print_node()
+	CommandTerminalLogger.log(2, ["COMMAND"], "Result:\n" + self.print_node())
 
 func merge_node(source_node: ArgumentNode, target_node = self):
 	for source_child in source_node.children:
@@ -29,15 +26,31 @@ func merge_node(source_node: ArgumentNode, target_node = self):
 		if reparent:
 			source_child.reparent([target_node])
 
-func print_node(node : ArgumentNode = self, tabcount = 0):
+func print_node_as_single() -> String:
+	var args : PackedStringArray = []
+	var node = self
+	while len(node.children) != 0:
+		node = node.children[0]
+		args.append(node.argument.to_string())
+	return " ".join(args)
+
+func print_node(node : ArgumentNode = self, tabcount = 0) -> String:
+	var out = ""
 	var tabs = ""
 	for i in range(0, tabcount): tabs += "\t"
 
+	if node.argument == null:
+		for child in node.children:
+			out += "\n" + print_node(child, tabcount + 1)
+		return out + "\n"
+
 	var callback = node.callback
 	if callback:
-		print(tabs + "%s - %s" % [node.argument, callback])
+		out += tabs + "%s - %s" % [node.argument, callback]
 	else:
-		print(tabs + "%s" % [node.argument])
+		out += tabs + "%s" % [node.argument]
 
 	for child in node.children:
-		print_node(child, tabcount + 1)
+		out += "\n" + print_node(child, tabcount + 1)
+	
+	return out
