@@ -29,16 +29,23 @@ func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
 				break
 		if not valid_child_found:
 			CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "No valid child found. Aborting.")
-			return
+			return null
 	return graph_nav
 
 func get_autofill_candidates(current_text) -> Array[String]:
-	var args = current_text.split(" ", false)
-	var current_node : ArgumentNode = _navigate_argument_graph(args.slice(0, -1))
+	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Attempting autofill...")
+	var args = current_text.split(" ")
+	var complete_args = args.slice(0, -1)
+	var incomplete_arg = args[-1]
+	var current_node : ArgumentNode = _navigate_argument_graph(complete_args)
+	if current_node == null: 
+		CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "No candidates found.")
+		return []
 	var candidates : Array[String] = []
 	for child in current_node.children:
-		if child.argument.is_autofill_candidate(args[-1]):
+		if child.argument.is_autofill_candidate(incomplete_arg):
 			candidates.append(child.argument.get_autofill_entry())
+	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Found candidates: %s." % [candidates])
 	return candidates
 
 func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:

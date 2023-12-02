@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5b8i4p40f5ua"]
+[gd_scene load_steps=5 format=3 uid="uid://b5b8i4p40f5ua"]
 
 [ext_resource type="Script" path="res://addons/command-terminal/src/CommandTerminalGuts.gd" id="1_monnh"]
+[ext_resource type="Script" path="res://addons/command-terminal/scn/CommandTerminalAutofillPanel.gd" id="2_urubn"]
+[ext_resource type="Script" path="res://addons/command-terminal/scn/CommandTerminalTerminalPanel.gd" id="3_bbpiv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3nmgc"]
 bg_color = Color(0, 0, 0, 1)
@@ -28,6 +30,7 @@ offset_top = -62.0
 offset_right = 459.0
 offset_bottom = -35.0
 grow_vertical = 0
+script = ExtResource("2_urubn")
 
 [node name="MarginContainer" type="MarginContainer" parent="AutofillControl/AUTOFILL-PANEL"]
 layout_mode = 2
@@ -55,6 +58,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_bbpiv")
 
 [node name="RichTextLabelMargins" type="MarginContainer" parent="TerminalControl/TERMINAL-PANEL"]
 layout_mode = 2
