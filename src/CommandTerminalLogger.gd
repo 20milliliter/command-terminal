@@ -9,8 +9,9 @@ const TAGS : Dictionary = {
 	"COMMAND" : "[color=RED][COMMAND][/color]",
 }
 
-static func log(level : int, tags : Array[String], message : String):
-	if ProjectSettings.get_setting(CommandTerminalPluginData.PLUGIN_PATH + "/logging_quantity", 0) < level: return
+static func log(message_level : int, tags : Array[String], message : String):
+	var log_level = ProjectSettings.get_setting(CommandTerminalPluginData.PLUGIN_PATH + "logging_quantity", 5)
+	if log_level < message_level: return
 	print_rich(_build_tagchain(tags), " ", message)
 
 static func _build_tagchain(tags : Array[String]) -> String:
