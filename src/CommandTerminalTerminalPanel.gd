@@ -19,11 +19,29 @@ func _ready():
 	terminal_line_edit.text_submitted.connect(
 		func(t): 
 			terminal_line_edit.text = ""
+			terminal_rich_label.text = ""
 			command_ran.emit(t)
+			terminal_line_edit.text_changed.emit("")
 	)
+	terminal_line_edit.focus_entered.connect(autofill_panel.update_autofill_content)
+	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
 func _on_contents_altered(new_contents : String):
 	terminal_rich_label.text = new_contents
+
+var old_contents : String = ""
+func autofill_argument(argument : String):
+	var existing = terminal_line_edit.text
+	var all_complete_args = existing.left(existing.rfind(" ") + 1)
+	var autofilled = all_complete_args + argument
+	terminal_rich_label.text = autofilled
+	terminal_line_edit.text = autofilled
+	terminal_line_edit.caret_column = autofilled.length()
+	CommandTerminalLogger.log(2, ["COMMAND","AUTOFILL"], "Autofilled argument '%s'." % [argument])
+
+func cancel_autofill():
+	terminal_rich_label.text = old_contents
+	terminal_line_edit.text = old_contents
 
 func _input(event):
 	#if not terminal_line_edit.has_focus(): return
@@ -35,6 +53,3 @@ func _input(event):
 func _process(delta):
 	if Input.is_action_just_pressed("ui_console"):
 		terminal_line_edit.grab_focus()
-	elif Input.is_action_just_pressed("ui_cancel"):
-		if terminal_line_edit.has_focus():
-			terminal_line_edit.release_focus()

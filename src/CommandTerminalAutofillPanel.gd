@@ -22,12 +22,14 @@ var autofill_selected_index = 0
 func advance_autofill_index(): _change_autofill_index(true)
 func reverse_autofill_index(): _change_autofill_index(false)
 func _change_autofill_index(forward : bool):
+	if autofill_candidates.is_empty(): return
 	autofill_selected_index += 1 if forward else -1
 	autofill_selected_index = clamp(autofill_selected_index, 0, len(autofill_candidates) - 1)
+	terminal_panel.autofill_argument(autofill_candidates[autofill_selected_index])
 	update_autofill_content()
 
 func update_autofill_content():
-	if autofill_candidates.is_empty():
+	if autofill_candidates.is_empty() or not terminal_panel.terminal_line_edit.has_focus():
 		self.visible = false
 		return
 	else:

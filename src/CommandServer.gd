@@ -4,7 +4,7 @@ extends Node
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 func register_command(_argument_graph : ArgumentGraph):
-	CommandTerminalLogger.log(2, ["COMMAND"], "Registering command '%s'." % [_argument_graph.print_node_as_single()])
+	CommandTerminalLogger.log(1, ["COMMAND"], "Registering command '%s'." % [_argument_graph.print_node_as_single()])
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 

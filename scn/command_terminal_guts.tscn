@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://b5b8i4p40f5ua"]
 
 [ext_resource type="Script" path="res://addons/command-terminal/src/CommandTerminalGuts.gd" id="1_monnh"]
-[ext_resource type="Script" path="res://addons/command-terminal/scn/CommandTerminalAutofillPanel.gd" id="2_urubn"]
-[ext_resource type="Script" path="res://addons/command-terminal/scn/CommandTerminalTerminalPanel.gd" id="3_bbpiv"]
+[ext_resource type="Script" path="res://addons/command-terminal/src/CommandTerminalAutofillPanel.gd" id="2_urubn"]
+[ext_resource type="Script" path="res://addons/command-terminal/src/CommandTerminalTerminalPanel.gd" id="3_bbpiv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3nmgc"]
 bg_color = Color(0, 0, 0, 1)
@@ -79,7 +79,6 @@ theme_override_colors/font_color = Color(0, 0, 0, 0)
 context_menu_enabled = false
 shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
-selecting_enabled = false
 flat = true
 caret_blink = true
 caret_blink_interval = 0.5
