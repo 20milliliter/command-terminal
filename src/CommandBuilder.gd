@@ -7,8 +7,13 @@ var upcoming_parents : Array[ArgumentNode] = [root]
 
 var writing_branches : bool = false
 var branch_stack : Array[Array]
+var writing_group : bool = false
+var group_args : Array[Argument] = []
 
 func add(node : ArgumentNode):
+	if writing_group:
+		group_args.push_back(node.argument)
+		return
 	node.reparent(upcoming_parents)
 	upcoming_parents = [node]
 
@@ -32,11 +37,6 @@ func Branch() -> CommandBuilder:
 		_next_branch()
 	return self
 
-func Callback(_callback : Callable) -> CommandBuilder:
-	for node in upcoming_parents:
-		node.callback = _callback
-	return self
-
 func _start_branch():
 	branch_stack.push_back(upcoming_parents)
 
@@ -46,6 +46,21 @@ func _next_branch():
 func EndBranch() -> CommandBuilder:
 	writing_branches = false
 	branch_stack.pop_back()
+	return self
+
+func Group() -> CommandBuilder:
+	writing_group = true
+	return self
+
+func EndGroup() -> CommandBuilder:
+	writing_group = false
+	self.add(ArgumentNode.new(GroupArgument.new(group_args), optional))
+	group_args = []
+	return self
+
+func Callback(_callback : Callable) -> CommandBuilder:
+	for node in upcoming_parents:
+		node.callback = _callback
 	return self
 
 func Optional() -> CommandBuilder:

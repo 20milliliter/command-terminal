@@ -23,4 +23,4 @@ func is_valid(_input) -> bool:
 	return validator.call(_input)
 
 func is_autofill_candidate(_input) -> bool:
-	return false
+	return true
