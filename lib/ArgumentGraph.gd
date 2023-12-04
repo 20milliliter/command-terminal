@@ -10,11 +10,11 @@ func _init(child : ArgumentNode = null):
 	super(null, Callable())
 
 func merge(source_tree : ArgumentGraph):
-	CommandTerminalLogger.log(2, ["COMMAND"], "Executing an ArgumentGraph merge...")
+	CommandTerminalLogger.log(3, ["COMMAND"], "Executing an ArgumentGraph merge...")
 	CommandTerminalLogger.log(3, ["COMMAND"], "Existing:\n" + self.print_node())
 	CommandTerminalLogger.log(3, ["COMMAND"], "Source:\n" + source_tree.print_node_as_single())
 	merge_node(source_tree)
-	CommandTerminalLogger.log(2, ["COMMAND"], "Result:\n" + self.print_node())
+	CommandTerminalLogger.log(3, ["COMMAND"], "Result:\n" + self.print_node())
 
 func merge_node(source_node: ArgumentNode, target_node = self):
 	for source_child in source_node.children:

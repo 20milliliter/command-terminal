@@ -14,7 +14,7 @@ func refresh_autofill_contents(new_text : String):
 	update_autofill_content()
 	update_autofill_position_and_size(new_text)
 
-var autofill_candidates : Array[String] = []
+var autofill_candidates : Array[Argument] = []
 func update_autofill_candidates(new_text):
 	autofill_candidates = CommandServer.get_autofill_candidates(new_text)
 
@@ -25,7 +25,7 @@ func _change_autofill_index(forward : bool):
 	if autofill_candidates.is_empty(): return
 	autofill_selected_index += 1 if forward else -1
 	autofill_selected_index = clamp(autofill_selected_index, 0, len(autofill_candidates) - 1)
-	terminal_panel.autofill_argument(autofill_candidates[autofill_selected_index])
+	terminal_panel.autofill_argument(autofill_candidates[autofill_selected_index].get_autofill_result())
 	update_autofill_content()
 
 func update_autofill_content():
@@ -37,13 +37,13 @@ func update_autofill_content():
 
 	autofill_rich_label.clear()
 	for index in range(0, len(autofill_candidates)):
-		var entry = autofill_candidates[index]
+		var list_entry : String = autofill_candidates[index].get_autofill_entry()
 		if index == autofill_selected_index:
 			autofill_rich_label.push_color(Color.YELLOW)
-			autofill_rich_label.append_text(entry)
+			autofill_rich_label.append_text(list_entry)
 			autofill_rich_label.pop()
 		else:
-			autofill_rich_label.append_text(entry)
+			autofill_rich_label.append_text(list_entry)
 		autofill_rich_label.append_text("\n")
 
 @onready var command_line_font : Font = command_terminal_guts.parent_node.font

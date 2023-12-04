@@ -32,19 +32,21 @@ func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
 			return null
 	return graph_nav
 
-func get_autofill_candidates(current_text) -> Array[String]:
+func get_autofill_candidates(current_text) -> Array[Argument]:
 	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Attempting autofill...")
 	var args = current_text.split(" ")
 	var complete_args = args.slice(0, -1)
 	var incomplete_arg = args[-1]
+	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "From position '%s'..." % [complete_args])
 	var current_node : ArgumentNode = _navigate_argument_graph(complete_args)
 	if current_node == null: 
 		CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "No candidates found.")
 		return []
-	var candidates : Array[String] = []
+	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Using text '%s'..." % [ incomplete_arg])
+	var candidates : Array[Argument] = []
 	for child in current_node.children:
 		if child.argument.is_autofill_candidate(incomplete_arg):
-			candidates.append(child.argument.get_autofill_entry())
+			candidates.append(child.argument)
 	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Found candidates: %s." % [candidates])
 	return candidates
 

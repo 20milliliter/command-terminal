@@ -15,6 +15,9 @@ func _to_string() -> String:
 func get_autofill_entry() -> String:
 	return "<%s>" % [key]
 
+func get_autofill_result() -> String:
+	return ""
+
 func is_equal(argument : Argument):
 	if not argument is ValidatedArgument: return false
 	return argument.key == self.key and argument.validator == self.validator
@@ -23,4 +26,5 @@ func is_valid(_input) -> bool:
 	return validator.call(_input)
 
 func is_autofill_candidate(_input) -> bool:
-	return true
+	if _input == "": return true
+	return is_valid(_input)

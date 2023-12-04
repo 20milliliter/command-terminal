@@ -37,7 +37,7 @@ func autofill_argument(argument : String):
 	terminal_rich_label.text = autofilled
 	terminal_line_edit.text = autofilled
 	terminal_line_edit.caret_column = autofilled.length()
-	CommandTerminalLogger.log(2, ["COMMAND","AUTOFILL"], "Autofilled argument '%s'." % [argument])
+	CommandTerminalLogger.log(2, ["COMMAND","TERMINAL","AUTOFILL"], "Autofilled argument '%s'." % [argument])
 
 func cancel_autofill():
 	terminal_rich_label.text = old_contents
