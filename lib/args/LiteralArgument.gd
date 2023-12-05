@@ -17,7 +17,7 @@ func is_equal(argument : Argument) -> bool:
 	if not argument is LiteralArgument: return false
 	return argument.literal.to_lower() == self.literal.to_lower()
 
-func is_valid(_input) -> bool: 
+func is_valid(_input : String) -> bool: 
 	return _input == literal
 
 func is_autofill_candidate(_input) -> bool:

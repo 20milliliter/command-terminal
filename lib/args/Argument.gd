@@ -21,7 +21,7 @@ func is_equal(argument : Argument) -> bool: #virtual
 	assert(false, "'is_equal()' called on Argument that does not implement it.")
 	return false
 	
-func is_valid(_input) -> bool: #virtual
+func is_valid(_input : String) -> bool: #virtual
 	assert(false, "'is_valid()' called on Argument that does not implement it.")
 	return false
 

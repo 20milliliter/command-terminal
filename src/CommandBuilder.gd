@@ -1,4 +1,5 @@
 class_name CommandBuilder
+extends RefCounted
 
 var root : ArgumentGraph = ArgumentGraph.new()
 var optional : bool = false
@@ -8,11 +9,10 @@ var upcoming_parents : Array[ArgumentNode] = [root]
 var writing_branches : bool = false
 var branch_stack : Array[Array]
 var writing_group : bool = false
-var group_args : Array[Argument] = []
 
 func add(node : ArgumentNode):
 	if writing_group:
-		group_args.push_back(node.argument)
+		upcoming_parents[0].argument.arguments.push_back(node.argument)
 		return
 	node.reparent(upcoming_parents)
 	upcoming_parents = [node]
@@ -48,14 +48,13 @@ func EndBranch() -> CommandBuilder:
 	branch_stack.pop_back()
 	return self
 
-func Group() -> CommandBuilder:
+func Group(_key : StringName, _validator : Callable = Callable()) -> CommandBuilder:
+	self.add(ArgumentNode.new(GroupArgument.new(_key, [], optional, _validator)))
 	writing_group = true
 	return self
 
 func EndGroup() -> CommandBuilder:
 	writing_group = false
-	self.add(ArgumentNode.new(GroupArgument.new(group_args), optional))
-	group_args = []
 	return self
 
 func Callback(_callback : Callable) -> CommandBuilder:

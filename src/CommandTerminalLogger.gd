@@ -5,7 +5,7 @@ const TAGS : Dictionary = {
 	"PLUGIN" : "[color=DARK_GRAY][PLUGIN][/color]",
 	"AUTOFILL" : "[color=DARK_GREEN][AUTOFILL][/color]",
 	"TERMINAL" : "[color=GREEN][TERMINAL][/color]",
-	"NAVIGATION" : "[color=WEBMAROON][NAVIGATION][/color]",
+	"TOKENIZE" : "[color=WEBMAROON][TOKENIZE][/color]",
 	"COMMAND" : "[color=RED][COMMAND][/color]",
 }
 

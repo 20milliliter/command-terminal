@@ -10,8 +10,8 @@ func _to_string() -> String:
 func is_equal(argument : Argument) -> bool:
 	return argument is VariadicArgument
 
-func is_valid(_input) -> bool:
+func is_valid(_input : String) -> bool:
 	return true
 
-func is_autofill_candidate(_input) -> bool:
+func is_autofill_candidate(_input : String) -> bool:
 	return false

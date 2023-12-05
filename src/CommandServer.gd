@@ -12,25 +12,32 @@ var current_command : String
 var current_arg : String
 
 func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
-	var graph_nav : ArgumentNode = argument_graph
-	CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Navigating with arguments '%s'" % [args]) 
+	var graph_nav : ArgumentNode = CommandServer.argument_graph
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Navigating with arguments '%s'" % [args]) 
 	for arg in args:
-		current_arg = arg
-		CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Navigating with target argument '%s'" % [arg]) 
+		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Navigating with target argument '%s'" % [arg]) 
 		if len(graph_nav.children) == 0:
-			CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Command graph leaf reached. Proceeding...")
+			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Command graph leaf reached. Proceeding...")
 			break
 		var valid_child_found : bool = false
 		for node in graph_nav.children:
 			if node.argument.is_valid(arg):
-				CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "Found valid child: %s" % [node])
+				CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Found valid child: %s" % [node])
 				graph_nav = node
 				valid_child_found = true
 				break
 		if not valid_child_found:
-			CommandTerminalLogger.log(3, ["COMMAND","NAVIGATION"], "No valid child found. Aborting.")
+			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "No valid child found. Aborting.")
 			return null
 	return graph_nav
+
+func get_graphnode_chain(args : Array[String]) -> Array[ArgumentNode]:
+	var chain : Array[ArgumentNode] = []
+	var final_node : ArgumentNode = _navigate_argument_graph(args)
+	while final_node != null:
+		chain.insert(0, final_node)
+		final_node = final_node.parents[0] if len(final_node.parents) > 0 else null
+	return chain
 
 func get_autofill_candidates(current_text) -> Array[Argument]:
 	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Attempting autofill...")
@@ -61,17 +68,20 @@ func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
 	return Callable()
 
+# func run_command(command : String):
+# 	current_command = command
+# 	var args = command.split(" ", false)
+# 	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
+# 	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
+# 	if graph_nav == null: return
+# 	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
+# 	var callback = _navigate_to_most_recent_callback(graph_nav)
+# 	if callback.is_null(): return
+# 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
+# 	callback.call(args)
+
 func run_command(command : String):
-	current_command = command
-	var args = command.split(" ", false)
-	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
-	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
-	if graph_nav == null: return
-	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
-	var callback = _navigate_to_most_recent_callback(graph_nav)
-	if callback.is_null(): return
-	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
-	callback.call(args)
+	print(CommandTokenizer.tokenize(command))
 
 var errors : Array[CommandError]
 
