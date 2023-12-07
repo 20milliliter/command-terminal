@@ -39,7 +39,9 @@ func _handle_editor_properties():
 
 	if terminal_panel_styling:
 		guts.get_node("%TERMINAL-PANEL").add_theme_stylebox_override("panel", terminal_panel_styling)
+		guts.get_node("%TERMINAL-PANEL").add_theme_stylebox_override("panel", terminal_panel_styling)
 	else:
+		guts.get_node("%TERMINAL-PANEL").remove_theme_stylebox_override("panel")
 		guts.get_node("%TERMINAL-PANEL").remove_theme_stylebox_override("panel")
 	
 	if font_size:

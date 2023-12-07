@@ -20,7 +20,7 @@ func get_autofill_candidates(current_text) -> Array[Argument]:
 	if current_node == null: 
 		CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "No candidates found.")
 		return []
-	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Using text '%s'..." % [ incomplete_arg])
+	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Using text '%s'..." % [incomplete_arg])
 	var candidates : Array[Argument] = []
 	for child in current_node.children:
 		if child.argument.is_autofill_candidate(incomplete_arg):
