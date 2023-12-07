@@ -18,6 +18,4 @@ extends RefCounted
 # 	if argument is ValidatedArgument:
 # 		var color : String = _validated_argument_color_list[_validated_argument_color_index]
 # 		return "[color=%s]%s[/color]" % [color, text]
-# 	elif argument is GroupArgument:
-# 		pass
 # 	return text
