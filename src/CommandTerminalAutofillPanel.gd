@@ -23,8 +23,8 @@ func advance_autofill_index(): _change_autofill_index(true)
 func reverse_autofill_index(): _change_autofill_index(false)
 func _change_autofill_index(forward : bool):
 	if autofill_candidates.is_empty(): return
-	autofill_selected_index += 1 if forward else -1
-	autofill_selected_index = clamp(autofill_selected_index, 0, len(autofill_candidates) - 1)
+	autofill_selected_index -= 1 if forward else -1
+	autofill_selected_index = wrapi(autofill_selected_index, 0, len(autofill_candidates))
 	terminal_panel.autofill_argument(autofill_candidates[autofill_selected_index].get_autofill_result())
 	update_autofill_content()
 

@@ -2,7 +2,7 @@ class_name CommandTerminalTerminalPanel
 extends PanelContainer
 
 @onready var command_terminal_guts : CommandTerminalGuts = self.get_parent().get_parent()
-@onready var autofill_panel = command_terminal_guts.autofill_panel
+@onready var autofill_panel : CommandTerminalAutofillPanel = command_terminal_guts.autofill_panel
 
 @onready var terminal_line_edit : LineEdit = $"%TERMINAL-LINE-EDIT"
 @onready var terminal_rich_label : RichTextLabel = $"%TERMINAL-RICH-LABEL"
@@ -13,8 +13,9 @@ signal command_ran(command : String)
 func _ready():
 	terminal_line_edit.text_changed.connect(
 		func(t): 
-			_on_contents_altered(t)
+			terminal_rich_label.text = _paint_terminal_text(t.split(" "))
 			contents_altered.emit(t)
+			append_autofill_suggestion.call_deferred()
 	)
 	terminal_line_edit.text_submitted.connect(
 		func(t): 
@@ -26,22 +27,26 @@ func _ready():
 	terminal_line_edit.focus_entered.connect(autofill_panel.update_autofill_content)
 	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
-func _on_contents_altered(new_contents : String):
-	terminal_rich_label.text = _paint_terminal_text(new_contents.split(" "))
-
 func _paint_terminal_text(args : PackedStringArray):
 	var token_strings : Array[String] = []
 	var tokens : Array = CommandServer.tokenizer.tokenize(args)
-	print("Revcieved tokens: %s" % [tokens])
 	for token in tokens:
 		token_strings.append(_paint_token(token))
-	print("Painted tokens: %s" % [token_strings])
 	return " ".join(token_strings)
 	
 func _paint_token(token) -> String:
-	var output : String = "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.entry]
-	print(output.replace("[", "[lb]"))
-	return output
+	return "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.entry]
+
+func append_autofill_suggestion():
+	var candidates = autofill_panel.autofill_candidates
+	if candidates.is_empty(): return
+	var autofill_result : String = candidates[0].get_autofill_result()
+	var args = terminal_line_edit.text.split(" ")
+	var last_arg : String = args[len(args) - 1]
+	var remaining_arg_text = autofill_result.right(-len(last_arg))
+	terminal_rich_label.push_color(Color(1, 1, 1, 0.25))
+	terminal_rich_label.append_text(remaining_arg_text)
+	terminal_rich_label.pop()
 
 var old_contents : String = ""
 func autofill_argument(argument : String):
