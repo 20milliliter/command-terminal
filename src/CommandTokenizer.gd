@@ -9,9 +9,8 @@ const _validated_argument_color_list : Array[String] = [
 	"#EDAA13",
 ]
 
-func tokenize(text : String) -> Array[CommandToken]:
+func tokenize(args : PackedStringArray) -> Array[CommandToken]:
 	var tokens : Array[CommandToken] = []
-	var args : PackedStringArray = text.split(" ")
 	var validated_argument_count : int = 0
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Arguments recieved: [%s]" % [args]) 
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Preparing to tokenize.") 

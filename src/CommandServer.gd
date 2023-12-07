@@ -2,7 +2,6 @@
 extends Node
 
 var tokenizer = preload("res://addons/command-terminal/src/CommandTokenizer.gd").new()
-var painter = preload("res://addons/command-terminal/src/CommandPainter.gd").new()
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 func register_command(_argument_graph : ArgumentGraph):
@@ -10,44 +9,14 @@ func register_command(_argument_graph : ArgumentGraph):
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
-var current_command : String
-var current_arg : String
-
-func _navigate_argument_graph(args : Array[String]) -> ArgumentNode:
-	var graph_nav : ArgumentNode = CommandServer.argument_graph
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Navigating with arguments '%s'" % [args]) 
-	for arg in args:
-		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Navigating with target argument '%s'" % [arg]) 
-		if len(graph_nav.children) == 0:
-			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Command graph leaf reached. Proceeding...")
-			break
-		var valid_child_found : bool = false
-		for node in graph_nav.children:
-			if node.argument.is_valid(arg):
-				CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Found valid child: %s" % [node])
-				graph_nav = node
-				valid_child_found = true
-				break
-		if not valid_child_found:
-			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "No valid child found. Aborting.")
-			return null
-	return graph_nav
-
-func get_graphnode_chain(args : Array[String]) -> Array[ArgumentNode]:
-	var chain : Array[ArgumentNode] = []
-	var final_node : ArgumentNode = _navigate_argument_graph(args)
-	while final_node != null:
-		chain.insert(0, final_node)
-		final_node = final_node.parents[0] if len(final_node.parents) > 0 else null
-	return chain
-
 func get_autofill_candidates(current_text) -> Array[Argument]:
 	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Attempting autofill...")
 	var args = current_text.split(" ")
-	var complete_args = args.slice(0, -1)
+	var complete_args = args.slice(0, -1) if args.size() > 1 else []
 	var incomplete_arg = args[-1]
 	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "From position '%s'..." % [complete_args])
-	var current_node : ArgumentNode = _navigate_argument_graph(complete_args)
+	var current_node : ArgumentNode = argument_graph
+	if not complete_args.is_empty(): current_node = tokenizer.tokenize(complete_args).back().node
 	if current_node == null: 
 		CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "No candidates found.")
 		return []
@@ -71,10 +40,9 @@ func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 	return Callable()
 
 func run_command(command : String):
-	current_command = command
 	var args = command.split(" ", false)
 	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
-	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
+	var graph_nav : ArgumentNode = tokenizer.tokenize(args).back().node
 	if graph_nav == null: return
 	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
 	var callback = _navigate_to_most_recent_callback(graph_nav)
@@ -82,6 +50,12 @@ func run_command(command : String):
 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
 	callback.call(args)
 
+var current_command : String = ""
+var relevant_arg : String = ""
+
 var errors : Array[CommandError]
-func push_error(error : String):
-	errors.append(CommandError.new(current_command, current_arg, error))
+func push_error(error_message : String):
+	_push_errorfull("", "", error_message)
+
+func _push_errorfull(attempted_command : String, relevant_arg : String, error_message : String):
+	errors.append(CommandError.new(attempted_command, relevant_arg, error_message))
