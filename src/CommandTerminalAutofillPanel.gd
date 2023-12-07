@@ -29,7 +29,7 @@ func _change_autofill_index(forward : bool):
 	update_autofill_content()
 
 func update_autofill_content():
-	if autofill_candidates.is_empty() or not terminal_panel.terminal_line_edit.has_focus():
+	if autofill_candidates.is_empty() or not terminal_panel.terminal_line_edit.has_focus() or terminal_panel.terminal_line_edit.text.is_empty():
 		self.visible = false
 		return
 	else:

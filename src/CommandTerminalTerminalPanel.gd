@@ -27,7 +27,9 @@ func _ready():
 	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
 func _on_contents_altered(new_contents : String):
-	terminal_rich_label.text = new_contents
+	var painted = CommandServer.painter.paint_terminal_text(new_contents)
+	print(painted.replace("[", "[lb]"))
+	terminal_rich_label.text = painted
 
 var old_contents : String = ""
 func autofill_argument(argument : String):

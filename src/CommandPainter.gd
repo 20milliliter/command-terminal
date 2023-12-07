@@ -1,21 +1,16 @@
-class_name CommandPainter
+#class_name CommandPainter
 extends RefCounted
 
-# func paint_terminal_text(text : String):
-# 	var text_args : Array[String] = text.split(" ")
-# 	var chain : Array[ArgumentNode] = CommandServer.get_graphnode_chain(text_args)
-# 	var args : Array[Argument] = []
-# 	for node in chain:
-# 		args.append(node.argument)
-# 	var painted : String = ""
-# 	for arg_idx in range(0, len(args)):
-# 		var text_arg = text_args[arg_idx]
-# 		var arg = args[arg_idx]
-# 		painted += _paint_argument(text_arg, arg)
-# 	return painted
-
-# func _paint_argument(text : String, argument : Argument) -> String:
-# 	if argument is ValidatedArgument:
-# 		var color : String = _validated_argument_color_list[_validated_argument_color_index]
-# 		return "[color=%s]%s[/color]" % [color, text]
-# 	return text
+func paint_terminal_text(text : String):
+	var token_strings : Array[String] = []
+	var tokens : Array = CommandServer.tokenizer.tokenize(text)
+	print("Revcieved tokens: %s" % [tokens])
+	for token in tokens:
+		token_strings.append(_paint_token(token))
+	print("Painted tokens: %s" % [token_strings])
+	return " ".join(token_strings)
+	
+func _paint_token(token) -> String:
+	var output : String = "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.entry]
+	print(output.replace("[", "[lb]"))
+	return output

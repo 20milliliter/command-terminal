@@ -1,6 +1,8 @@
 #class_name CommandServer
 extends Node
 
+var tokenizer = preload("res://addons/command-terminal/src/CommandTokenizer.gd").new()
+var painter = preload("res://addons/command-terminal/src/CommandPainter.gd").new()
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 func register_command(_argument_graph : ArgumentGraph):
@@ -68,22 +70,18 @@ func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
 	return Callable()
 
-# func run_command(command : String):
-# 	current_command = command
-# 	var args = command.split(" ", false)
-# 	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
-# 	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
-# 	if graph_nav == null: return
-# 	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
-# 	var callback = _navigate_to_most_recent_callback(graph_nav)
-# 	if callback.is_null(): return
-# 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
-# 	callback.call(args)
-
 func run_command(command : String):
-	print(CommandTokenizer.tokenize(command))
+	current_command = command
+	var args = command.split(" ", false)
+	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
+	var graph_nav : ArgumentNode = _navigate_argument_graph(args)
+	if graph_nav == null: return
+	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
+	var callback = _navigate_to_most_recent_callback(graph_nav)
+	if callback.is_null(): return
+	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
+	callback.call(args)
 
 var errors : Array[CommandError]
-
 func push_error(error : String):
 	errors.append(CommandError.new(current_command, current_arg, error))
