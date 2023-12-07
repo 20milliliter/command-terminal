@@ -27,9 +27,21 @@ func _ready():
 	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
 func _on_contents_altered(new_contents : String):
-	var painted = CommandServer.painter.paint_terminal_text(new_contents)
-	print(painted.replace("[", "[lb]"))
-	terminal_rich_label.text = painted
+	terminal_rich_label.text = _paint_terminal_text(new_contents.split(" "))
+
+func _paint_terminal_text(args : PackedStringArray):
+	var token_strings : Array[String] = []
+	var tokens : Array = CommandServer.tokenizer.tokenize(args)
+	print("Revcieved tokens: %s" % [tokens])
+	for token in tokens:
+		token_strings.append(_paint_token(token))
+	print("Painted tokens: %s" % [token_strings])
+	return " ".join(token_strings)
+	
+func _paint_token(token) -> String:
+	var output : String = "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.entry]
+	print(output.replace("[", "[lb]"))
+	return output
 
 var old_contents : String = ""
 func autofill_argument(argument : String):
