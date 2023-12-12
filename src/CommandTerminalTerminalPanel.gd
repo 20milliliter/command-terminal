@@ -52,7 +52,6 @@ func append_autofill_suggestion():
 	terminal_rich_label.push_color(Color(1, 1, 1, 0.25))
 	terminal_rich_label.append_text(remaining_arg_text)
 	terminal_rich_label.pop()
-	print()
 
 func autofill_text(argument : String):
 	var existing = terminal_line_edit.text

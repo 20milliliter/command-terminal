@@ -91,7 +91,7 @@ func prune_autofill_content(line_edit_contents : String):
 			will_prune = true
 
 		if will_prune:
-			print("Pruned '%s' from autofill" % [content]) 
+			#print("Pruned '%s' from autofill" % [content]) 
 			contents_copy.erase(content)
 			owners_copy.erase(owner)
 
