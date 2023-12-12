@@ -24,6 +24,17 @@ func Variadic() -> CommandBuilder:
 func Validated(_key : StringName, _validator : Callable = Callable()) -> CommandBuilder:
 	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator)))
 	return self
+	
+func Key(_name : String, _autofill_provider : Callable, _validator : Callable = Callable()) -> CommandBuilder:
+	if _validator.is_null():
+		_validator = func(a): 
+			if a == "": return false
+			for i in _autofill_provider.call():
+				if i.begins_with(a):
+					return true
+			return false
+	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _validator, _autofill_provider)))
+	return self
 
 func Branch() -> CommandBuilder:
 	if not writing_branches:

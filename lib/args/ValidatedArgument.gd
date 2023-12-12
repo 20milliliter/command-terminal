@@ -1,26 +1,23 @@
 class_name ValidatedArgument
 extends Argument
 
-var key : StringName
+var name : StringName
 var validator : Callable
 
-func _init(_key : StringName, _optional = false, _validator : Callable = Callable()):
-	key = _key
+func _init(_name : StringName, _optional = false, _validator : Callable = Callable()):
+	name = _name
 	validator = _validator
-	super()
+	super(_optional)
 
 func _to_string() -> String:
-	return "<%s>" % [key]
-
-func get_autofill_entry() -> String:
-	return "<%s>" % [key]
+	return "<%s>" % [name]
 
 func get_autofill_result() -> String:
 	return ""
 
 func is_equal(argument : Argument):
 	if not argument is ValidatedArgument: return false
-	return argument.key == self.key and argument.validator == self.validator
+	return argument.name == self.name and argument.validator == self.validator
 	
 func is_valid(_input : String) -> bool: 
 	return validator.call(_input)

@@ -9,24 +9,22 @@ func register_command(_argument_graph : ArgumentGraph):
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
-func get_autofill_candidates(current_text) -> Array[Argument]:
-	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Attempting autofill...")
-	var args = current_text.split(" ")
-	var complete_args = args.slice(0, -1) if args.size() > 1 else []
-	var incomplete_arg = args[-1]
-	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "From position '%s'..." % [complete_args])
-	var current_node : ArgumentNode = argument_graph
-	if not complete_args.is_empty(): current_node = tokenizer.tokenize(complete_args).back().node
-	if current_node == null: 
-		CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "No candidates found.")
-		return []
-	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Using text '%s'..." % [incomplete_arg])
-	var candidates : Array[Argument] = []
-	for child in current_node.children:
-		if child.argument.is_autofill_candidate(incomplete_arg):
-			candidates.append(child.argument)
-	CommandTerminalLogger.log(3, ["COMMAND", "AUTOFILL"], "Found candidates: %s." % [candidates])
-	return candidates
+func get_arg_info_from_text(text : String) -> Dictionary:
+	var args = text.split(" ")
+	return {
+		"args" : args,
+		"complete_args" : args.slice(0, -1) if args.size() > 1 else [],
+		"incomplete_arg" : args[-1],
+	}
+
+func get_working_argumentnode(text : String) -> ArgumentNode:
+	var tokens = CommandServer.tokenizer.tokenize_text(text)
+	if not tokens.is_empty():
+		while tokens.back().is_valid == false:
+			tokens.pop_back()
+			if tokens.is_empty(): return CommandServer.argument_graph
+		return tokens.back().node
+	return CommandServer.argument_graph
 
 func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to most recent callback.")
@@ -42,7 +40,9 @@ func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 func run_command(command : String):
 	var args = command.split(" ", false)
 	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'" % [args])
-	var graph_nav : ArgumentNode = tokenizer.tokenize(args).back().node
+	var tokens = self.tokenizer.tokenize_args(args)
+	if tokens.is_empty(): return
+	var graph_nav : ArgumentNode = tokens.back().node
 	if graph_nav == null: return
 	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
 	var callback = _navigate_to_most_recent_callback(graph_nav)

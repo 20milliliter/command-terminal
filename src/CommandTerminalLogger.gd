@@ -7,6 +7,7 @@ const TAGS : Dictionary = {
 	"TERMINAL" : "[color=GREEN][TERMINAL][/color]",
 	"TOKENIZE" : "[color=WEBMAROON][TOKENIZE][/color]",
 	"COMMAND" : "[color=RED][COMMAND][/color]",
+	"PAINTING" : "[color=PURPLE][PAINTING][/color]",
 }
 
 static func log(message_level : int, tags : Array[String], message : String):

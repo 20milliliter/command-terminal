@@ -10,9 +10,6 @@ func _init(_literal : StringName, _optional = false):
 func _to_string() -> String:
 	return "%s" % [literal]
 
-func get_autofill_entry() -> String:
-	return literal
-
 func is_equal(argument : Argument) -> bool:
 	if not argument is LiteralArgument: return false
 	return argument.literal.to_lower() == self.literal.to_lower()
