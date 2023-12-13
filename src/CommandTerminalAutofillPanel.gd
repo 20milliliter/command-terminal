@@ -76,7 +76,7 @@ func update_autofill_content():
 			autofill_content_owners.append(autofill_argument)
 
 func prune_autofill_content(line_edit_contents : String):
-	var incomplete_arg = CommandServer.get_arg_info_from_text(line_edit_contents)["incomplete_arg"]
+	var last_arg = CommandServer.get_arg_info_from_text(line_edit_contents)["last_arg"]
 	var contents_copy = autofill_contents.duplicate()
 	var owners_copy = autofill_content_owners.duplicate()
 	for index in range(0, len(autofill_contents)):
@@ -85,9 +85,9 @@ func prune_autofill_content(line_edit_contents : String):
 		var will_prune = false
 
 		if owner.has_method("is_autofill_candidate"):
-			if not owner.is_autofill_candidate(incomplete_arg):
+			if not owner.is_autofill_candidate(last_arg):
 				will_prune = true
-		elif not content.begins_with(incomplete_arg):
+		elif not content.begins_with(last_arg):
 			will_prune = true
 
 		if will_prune:

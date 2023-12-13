@@ -1,8 +1,13 @@
 #class_name CommandTokenizer
 extends RefCounted
 
+var command_server : CommandServer = null
+
+func _init(_server_instance : CommandServer):
+	command_server = _server_instance
+
 func tokenize_text(text : String) -> Array[CommandToken]:
-	return tokenize_args(CommandServer.get_arg_info_from_text(text)["args"])
+	return tokenize_args(command_server.get_arg_info_from_text(text)["args"])
 
 func tokenize_args(args : PackedStringArray) -> Array[CommandToken]:
 	return _cache(args)
@@ -25,7 +30,7 @@ func _tokenize(args : PackedStringArray) -> Array[CommandToken]:
 	var tokens : Array[CommandToken] = []
 	colored_arg_count = 0
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Arguments recieved: [%s]" % [args]) 
-	current_working_node = CommandServer.argument_graph
+	current_working_node = command_server.argument_graph
 	for arg in args:
 		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Tokenizing arg '%s'..." % [arg]) 
 		tokens.push_back(tokenize_arg(arg))
