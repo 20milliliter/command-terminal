@@ -36,6 +36,9 @@ func Key(_name : String, _autofill_provider : Callable, _validator : Callable = 
 	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _validator, _autofill_provider)))
 	return self
 
+func StartBranch() -> CommandBuilder:
+	return self
+
 func Branch() -> CommandBuilder:
 	if not writing_branches:
 		writing_branches = true
@@ -66,3 +69,6 @@ func Optional() -> CommandBuilder:
 
 func Build() -> ArgumentGraph:
 	return root
+
+func _build_deroot() -> ArgumentNode:
+	return root.children[0]
