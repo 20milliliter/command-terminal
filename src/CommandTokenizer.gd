@@ -26,15 +26,25 @@ func _cache(args : PackedStringArray):
 
 var current_working_node : ArgumentNode = null
 var colored_arg_count : int = 0
-func _tokenize(args : PackedStringArray) -> Array[CommandToken]:
+func _tokenize(_input : String) -> Array[CommandToken]:
 	var tokens : Array[CommandToken] = []
 	colored_arg_count = 0
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Arguments recieved: [%s]" % [args]) 
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Input recieved: [%s]" % [_input]) 
 	current_working_node = command_server.argument_graph
+
+	for child in current_working_node.children:
+		var argument : Argument = child.argument
+		var is_valid : bool = argument.is_valid(_input)
+
 	for arg in args:
 		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Tokenizing arg '%s'..." % [arg]) 
 		tokens.push_back(tokenize_arg(arg))
 	return tokens
+
+#TODO: new method for tokenizing args:
+# 0. recurse through tree
+# 1. if argument.get_satisfying_prefix != "", trim it, and repeat with children
+# 2. else, ask it for get_autofill_candidates
 
 func tokenize_arg(arg : String) -> CommandToken:
 	var next_working_node : ArgumentNode = null

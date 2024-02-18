@@ -12,16 +12,25 @@ func _init(_name : StringName, _optional = false, _validator : Callable = Callab
 func _to_string() -> String:
 	return "<%s>" % [name]
 
-func get_autofill_result() -> String:
-	return ""
+func _is_valid() -> bool:
+	var validator_output = validator.call()
+	if not validator_output is bool: return false
+	return true
 
-func is_equal(argument : Argument):
+func _is_equal(argument : Argument) -> bool:
 	if not argument is ValidatedArgument: return false
-	return argument.name == self.name and argument.validator == self.validator
-	
-func is_valid(_input : String) -> bool: 
-	return validator.call(_input)
+	if not name == argument.name: return false
+	if not validator == argument.validator: return false
+	return true
 
-func is_autofill_candidate(_input) -> bool:
-	if _input == "": return true
-	return is_valid(_input)
+func get_autofill_entries(_remaining_input : String) -> Array[String]:
+	if _remaining_input.find(" "):
+		return [str(self)]
+	return []
+
+func get_satisfying_prefix(_remaining_input : String) -> String:
+	var next : String = _remaining_input.get_slice(" ", 0)
+	var next_is_valid : bool = validator.call(next)
+	if next_is_valid:
+		return next
+	return ""
