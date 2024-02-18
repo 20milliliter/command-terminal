@@ -33,6 +33,20 @@ func _ready():
 			.EndBranch()
 		.Build()
 	)
+	CommandServer.register_command(
+		CommandBuilder.new()
+			.Literal("A")
+			.Branch()
+				.Literal("B")
+				.Branch().Literal("E")
+				.NextBranch().Literal("F")
+				.EndBranch()
+				.Literal("X")
+			.NextBranch().Literal("C")
+			.NextBranch().Literal("D")
+			.EndBranch()
+		.Build()
+	)
 
 func channel_check(args):
 	print("Checking channel %s" % [args[2]])

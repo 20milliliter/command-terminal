@@ -1,15 +1,20 @@
 class_name CommandBuilder
 extends RefCounted
 
+var logger = CommandTerminalLogger
+
 var root : ArgumentGraph = ArgumentGraph.new()
 var optional : bool = false
 
 var upcoming_parents : Array[ArgumentNode] = [root]
+var branch_stack : Array[Array] = []
+var branch_leaves_stack : Array[Array] = []
 
-var writing_branches : bool = false
-var branch_stack : Array[Array]
+func _init():
+	logger.log(3, ["COMMAND", "BUILDER"], "New builder created.")
 
 func add(node : ArgumentNode):
+	logger.log(3, ["COMMAND", "BUILDER"], "Node added: %s" % [node])
 	node.reparent(upcoming_parents)
 	upcoming_parents = [node]
 
@@ -37,22 +42,23 @@ func Key(_name : String, _autofill_provider : Callable, _validator : Callable = 
 	return self
 
 func Branch() -> CommandBuilder:
-	if not writing_branches:
-		writing_branches = true
-		_start_branch()
-	else:
-		_next_branch()
+	logger.log(2, ["COMMAND", "BUILDER"], "Branching...")
+	branch_stack.push_back(upcoming_parents)
+	logger.log(3, ["COMMAND", "BUILDER"], "Updated Branch stack: %s" % [branch_stack])
 	return self
 
-func _start_branch():
-	branch_stack.push_back(upcoming_parents)
-
-func _next_branch():
+func NextBranch() -> CommandBuilder:
+	logger.log(2, ["COMMAND", "BUILDER"], "Next branch...")
+	branch_leaves_stack.append(upcoming_parents)
 	upcoming_parents = branch_stack.back()
-	
+	logger.log(3, ["COMMAND", "BUILDER"], "Updated BranchLeaves stack: %s" % [branch_leaves_stack.back()])
+	return self
+
 func EndBranch() -> CommandBuilder:
-	writing_branches = false
+	logger.log(2, ["COMMAND", "BUILDER"], "Ended current branch.")
+	upcoming_parents += branch_leaves_stack.pop_back()
 	branch_stack.pop_back()
+	logger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
 	return self
 
 func Callback(_callback : Callable) -> CommandBuilder:
@@ -66,3 +72,6 @@ func Optional() -> CommandBuilder:
 
 func Build() -> ArgumentGraph:
 	return root
+
+func _build_deroot() -> ArgumentNode:
+	return root.children[0]
