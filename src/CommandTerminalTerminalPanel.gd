@@ -28,16 +28,25 @@ func _ready():
 	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
 func _paint_terminal_text(text : String):
+	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(text)
+	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Painting '%s'." % [text]) 
+	var paints : Array[String] = _paint_tokennodes_recursive(tokentree)
+	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Tokens: '%s'." % [paints]) 
+	var output : String = " ".join(paints)
+	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Output: '%s'." % [output]) 
+	return output
+
+func _paint_tokennodes_recursive(tokentreenode : CommandTokenizer.TokenTreeNode) -> Array[String]:
+	var token = tokentreenode.token
 	var token_strings : Array[String] = []
-	var tokens : Array = CommandServer.tokenizer.tokenize_text(text)
-	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Painting '%s'." % [tokens]) 
-	for token in tokens:
+	if not token is CommandTokenizer.RootToken:
 		token_strings.append(_paint_token(token))
-	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Output: '%s'." % [token_strings]) 
-	return " ".join(token_strings)
-	
-func _paint_token(token) -> String:
-	return "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.entry]
+	for childnode in tokentreenode.children:
+		token_strings.append_array(_paint_tokennodes_recursive(childnode))
+	return token_strings
+
+func _paint_token(token : CommandTokenizer.Token) -> String:
+	return "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.content]
 
 func append_autofill_suggestion():
 	var contents = autofill_panel.autofill_contents

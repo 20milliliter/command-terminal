@@ -28,12 +28,11 @@ func _is_equal(argument : Argument):
 	if not argument.keys_provider == keys_provider: return false
 	return true
 		
-
 func get_autofill_entries(_remaining_input : String) -> Array[String]:
 	var keys : Array[String] = keys_provider.call()
 	var candidate_keys : Array[String] = []
 	for key in keys:
-		if _remaining_input.begins_with(key):
+		if key.begins_with(_remaining_input):
 			candidate_keys.append(key)
 	return candidate_keys
 

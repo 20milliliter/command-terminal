@@ -17,4 +17,4 @@ func get_autofill_entries(_remaining_input : String) -> Array[String]:
 	return [str(self)]
 
 func get_satisfying_prefix(_remaining_input : String) -> String:
-	return ""
+	return _remaining_input

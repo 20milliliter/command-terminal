@@ -100,7 +100,6 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_cdo78")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_if72k")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_1sgd6")
 context_menu_enabled = false
-shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
 drag_and_drop_selection_enabled = false
 flat = true

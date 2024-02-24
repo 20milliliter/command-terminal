@@ -20,7 +20,7 @@ func _to_string() -> String:
 		return "ArgumentNode(%s)" % [argument._to_string()]
 
 func is_equal(node : ArgumentNode) -> bool:
-	return self.argument.is_equal(node.argument)
+	return self.argument._is_equal(node.argument)
 
 func add_child(node : ArgumentNode):
 	self.children.append(node)

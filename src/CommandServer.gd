@@ -2,8 +2,7 @@
 extends Node
 
 var logger = CommandTerminalLogger
-
-var tokenizer = preload("res://addons/command-terminal/src/CommandTokenizer.gd").new(self)
+var tokenizer = CommandTokenizer
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 func register_command(_argument_graph : ArgumentGraph):
@@ -11,16 +10,8 @@ func register_command(_argument_graph : ArgumentGraph):
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
-func get_arg_info_from_text(text : String) -> Dictionary:
-	var args = text.split(" ")
-	return {
-		"args" : args,
-		"complete_args" : args.slice(0, -1) if args.size() > 1 else PackedStringArray([]),
-		"last_arg" : args[-1],
-	}
-
 func get_working_argumentnode(text : String) -> ArgumentNode:
-	var tokens = self.tokenizer.tokenize_text(text)
+	var tokens = self.tokenizer.tokenize_input(text)
 	if not tokens.is_empty():
 		while tokens.back().is_valid == false:
 			tokens.pop_back()
