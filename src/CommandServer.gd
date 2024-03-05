@@ -11,8 +11,10 @@ var argument_graph : ArgumentGraph = ArgumentGraph.new()
 ## Use the provided [CommandBuilder] class to create an ArgumentGraph.
 func register_command(command_graph : ArgumentGraph) -> void:
 	CommandTerminalLogger.log(1, ["COMMAND"], "Registering command '%s'." % [command_graph.print_node_as_single()])
-	#if ArgumentGraphValidator.is_valid_graph(command_graph)
-	argument_graph.merge(command_graph)
+	if ArgumentGraphValidator.is_valid_graph(command_graph):
+		argument_graph.merge(command_graph)
+	else:
+		CommandTerminalLogger.log(1, ["COMMAND"], "Invalid command graph. Command not registered.")
 
 ## Runs a command. Takes a string as input.
 ## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
