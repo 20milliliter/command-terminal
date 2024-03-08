@@ -10,14 +10,18 @@ func register_command(_argument_graph : ArgumentGraph):
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
-func get_working_argumentnode(text : String) -> ArgumentNode:
-	var tokens = self.tokenizer.tokenize_input(text)
-	if not tokens.is_empty():
-		while tokens.back().is_valid == false:
-			tokens.pop_back()
-			if tokens.is_empty(): return self.argument_graph
-		return tokens.back().node
-	return self.argument_graph
+func run_command(command : String):
+	var tokentree = self.tokenizer.tokenize_input(command)
+	var end = tokentree.children.back()
+	while end.children.size() > 0:
+		end = end.children.back()
+	var graph_nav : ArgumentNode = end.token.node
+	if graph_nav == null: return
+	logger.log(3, ["COMMAND"], "Locating callable.")
+	var callback = _navigate_to_most_recent_callback(graph_nav)
+	if callback.is_null(): return
+	logger.log(2, ["COMMAND"], "Executing command...")
+	callback.call(command.split(" "))
 
 func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 	logger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to most recent callback.")
@@ -29,19 +33,6 @@ func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
 		logger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to parent '%s'" % [node] )
 		logger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
 	return Callable()
-
-func run_command(command : String):
-	var args = command.split(" ", false)
-	logger.log(1, ["COMMAND"], "Running command '%s'" % [args])
-	var tokens = self.tokenizer.tokenize_args(args)
-	if tokens.is_empty(): return
-	var graph_nav : ArgumentNode = tokens.back().node
-	if graph_nav == null: return
-	logger.log(3, ["COMMAND"], "Locating callable.")
-	var callback = _navigate_to_most_recent_callback(graph_nav)
-	if callback.is_null(): return
-	logger.log(2, ["COMMAND"], "Executing command...")
-	callback.call(args)
 
 var current_command : String = ""
 var relevant_arg : String = ""

@@ -5,8 +5,7 @@ static func tokenize_input(input : String) -> TokenTreeNode:
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Preparing to tokenize.")
 	var output = _tokenize(input)
 	_clean_leftovers(output)
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Returning tokenization:")
-	_print_tree(output)
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Returning tokenization: \n" + _print_tree(output))
 	return output
 
 static func _tokenize(
@@ -83,16 +82,17 @@ static func _clean_leftovers(node : TokenTreeNode):
 	for child in node.children:
 		_clean_leftovers(child)
 
-static func _print_tree(node : TokenTreeNode, depth : int = 0):
+static func _print_tree(node : TokenTreeNode, depth : int = 0) -> String:
 	var content : String
 	if node.token != null:
 		content = str(node.token)
 	else:
 		content = "root"
-	print("\t".repeat(depth), content)
+	content = "\t".repeat(depth) + content
 	for child in node.children:
 		if child != null:
-			_print_tree(child, depth + 1)
+			content += "\n" + _print_tree(child, depth + 1)
+	return content
 
 class Token extends RefCounted:
 	var content : String

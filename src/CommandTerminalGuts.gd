@@ -20,3 +20,13 @@ func _ready():
 	CommandTerminalLogger.log(2, ["TERMINAL"], "Registered 'ui_console' to InputMap")
 
 	terminal_panel.command_ran.connect(CommandServer.run_command)
+
+var last_input : String = ""
+var last_output : CommandTokenizer.TokenTreeNode
+func tokenizer_cache(new_text : String) -> CommandTokenizer.TokenTreeNode:
+	if new_text == last_input:
+		return last_output
+	else:
+		last_input = new_text
+		last_output = CommandTokenizer.tokenize_input(new_text)
+		return last_output

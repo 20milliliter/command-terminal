@@ -28,7 +28,7 @@ func _ready():
 	terminal_line_edit.focus_exited.connect(autofill_panel.update_autofill_content)
 
 func _paint_terminal_text(text : String):
-	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(text)
+	var tokentree : CommandTokenizer.TokenTreeNode = command_terminal_guts.tokenizer_cache(text)
 	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Painting '%s'." % [text]) 
 	var paints : Array[String] = _paint_tokennodes_recursive(tokentree)
 	CommandTerminalLogger.log(3, ["COMMAND","PAINTING"], "Tokens: '%s'." % [paints]) 

@@ -17,7 +17,7 @@ func refresh_autofill_contents(new_text : String):
 var autofill_entries : Array[String] = []
 
 func fetch_autofill_entries(new_text):
-	var tokentreeroot : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(new_text)
+	var tokentreeroot : CommandTokenizer.TokenTreeNode = command_terminal_guts.tokenizer_cache(new_text)
 	_fetch_autofill_entries(tokentreeroot)
 
 func _fetch_autofill_entries(_token_tree_node):	
