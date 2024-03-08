@@ -1,84 +1,71 @@
-#class_name CommandTokenizer
+class_name CommandTokenizer
 extends RefCounted
 
-var command_server : CommandServer = null
+static func tokenize_input(input : String) -> TokenTreeNode:
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Preparing to tokenize.")
+	var output = _tokenize(input)
+	_clean_leftovers(output)
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Returning tokenization: \n" + _print_tree(output))
+	return output
 
-func _init(_server_instance : CommandServer):
-	command_server = _server_instance
-
-func tokenize_text(text : String) -> Array[CommandToken]:
-	return tokenize_args(command_server.get_arg_info_from_text(text)["args"])
-
-func tokenize_args(args : PackedStringArray) -> Array[CommandToken]:
-	return _cache(args)
-
-var last_proc : PackedStringArray = []
-var last_output : Array[CommandToken] = []
-func _cache(args : PackedStringArray):
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Preparing to tokenize.") 
-	if last_proc == args:
-		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Cache hit. Returning tokens: [%s]" % [last_output]) 
-		return last_output
-	last_proc = args
-	last_output = _tokenize(args)
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Returning tokens: [%s]" % [last_output]) 
-	return last_output
-
-var current_working_node : ArgumentNode = null
-var colored_arg_count : int = 0
-func _tokenize(args : PackedStringArray) -> Array[CommandToken]:
-	var tokens : Array[CommandToken] = []
-	colored_arg_count = 0
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Arguments recieved: [%s]" % [args]) 
-	current_working_node = command_server.argument_graph
-	for arg in args:
-		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Tokenizing arg '%s'..." % [arg]) 
-		tokens.push_back(tokenize_arg(arg))
-	return tokens
-
-func tokenize_arg(arg : String) -> CommandToken:
-	var next_working_node : ArgumentNode = null
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Creating token...") 
-	var token = CommandToken.new(
-		"???",
-		arg,
-		null,
-		null,
-		Color.RED,
-		false,
-		false
-	)
-	if current_working_node != null:
-		for child in current_working_node.children:
-			var argument : Argument = child.argument
-			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Checking argument '%s'..." % [argument]) 
-			if argument.has_method("is_valid"):
-				if argument.is_valid(arg):
-					_scribe_on_token(token, child)
-					token.is_valid = true
-					next_working_node = child
-			elif argument.has_method("is_autofill_candidate"):
-				if argument.is_autofill_candidate(arg):
-					_scribe_on_token(token, child)
-					token.is_approaching = true
-					next_working_node = child
+static func _tokenize(
+		_input : String, 
+		_working_node : ArgumentNode = CommandServer.argument_graph,
+		_colored_arg_count : int = 0
+	) -> TokenTreeNode:
+	
+	if _working_node is ArgumentGraph:
+		# Working node is root, skip to children
+		var treenode := TokenTreeNode.new(RootToken.new())
+		for child in _working_node.children:
+			var child_node : TokenTreeNode = _tokenize(_input, child)
+			if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
+				treenode.children.push_back(child_node)
 			else:
-				continue
-	if token.argument is ValidatedArgument or token.argument is KeyArgument:
-		colored_arg_count += 1
-		token.color = _COLORED_ARGS_COLOR_LIST[colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
-	else:
-		if token.is_valid:
-			token.color = Color.WHITE
-	current_working_node = next_working_node
-	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Created token: %s" % [token])
-	return token
+				print("didnt add lol")
+		return treenode
 
-func _scribe_on_token(token, child):
-	var argument = child.argument
-	token.name = argument.to_string()
-	token.argument = argument
-	token.node = child
+	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], 
+		"Trying '%s' against %s" % [_input, _working_node]
+	)
+	
+	var argument : Argument = _working_node.argument
+	var token := CommandToken.new(
+		str(_working_node.argument),
+		_working_node.argument,
+		_working_node,
+		Color.RED,
+		_input
+	)
+
+	var satisfying_prefix : String = argument.get_satisfying_prefix(_input + " ")
+	if satisfying_prefix != "":
+		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "'%s' accepted." % [satisfying_prefix]) 
+		token.content = satisfying_prefix
+		var trimmed_input : String = _input.substr(satisfying_prefix.length() + 1)
+
+		token.color = Color.WHITE
+		if _working_node.argument is ValidatedArgument or _working_node.argument is KeyArgument:
+			_colored_arg_count += 1
+			token.color = _COLORED_ARGS_COLOR_LIST[_colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
+
+		var treenode := TokenTreeNode.new(token)
+		if _input.length() > satisfying_prefix.length():
+			for child in _working_node.children:
+				var child_node : TokenTreeNode = _tokenize(trimmed_input, child)
+				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
+					treenode.children.push_back(child_node)
+		return treenode
+	else:
+		var autofill_candidates : Array[String] = argument.get_autofill_entries(_input)
+		if autofill_candidates.size() > 0:
+			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Accepted as autofill possibility.")
+			token.color = Color.WHITE
+			token.provided_autofill_entries = autofill_candidates
+			return TokenTreeNode.new(token)
+		else:
+			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Not accepted.")  
+			return TokenTreeNode.new(LeftoverToken.new(_input))
 
 const _COLORED_ARGS_COLOR_LIST : Array[String] = [
 	"#5FFAF8",
@@ -88,26 +75,69 @@ const _COLORED_ARGS_COLOR_LIST : Array[String] = [
 	"#EDAA13",
 ]
 
-class CommandToken extends RefCounted:
-	var name : String
-	var entry : String
-	var argument : Argument
-	var node : ArgumentNode
+static func _clean_leftovers(node : TokenTreeNode):
+	if node.children.size() > 1:
+		for child in node.children.duplicate():
+			if child.token is LeftoverToken:
+				node.children.erase(child)
+	for child in node.children:
+		_clean_leftovers(child)
+
+static func _print_tree(node : TokenTreeNode, depth : int = 0) -> String:
+	var content : String
+	if node.token != null:
+		content = str(node.token)
+	else:
+		content = "root"
+	content = "\t".repeat(depth) + content
+	for child in node.children:
+		if child != null:
+			content += "\n" + _print_tree(child, depth + 1)
+	return content
+
+class Token extends RefCounted:
+	var content : String
 	var color : Color
-	var is_valid : bool
-	var is_approaching : bool
-
-	func _init(_name : String, _entry : String, _argument : Argument, _node : ArgumentNode, _color : Color, _is_valid: bool, _is_approaching: bool):
-		name = _name
-		entry = _entry
-		argument = _argument
-		node = _node
-		color = _color
-		is_valid = _is_valid
-		is_approaching = _is_approaching
-
-	func _to_string():
-		return "CommandToken(%s, %s, %s, %s, %s, %s, %s)" % [name, entry, argument, node, color, is_valid, is_approaching]
 
 	func get_color_as_hex() -> String:
 		return "#%02X%02X%02X" % [color.r * 255, color.g * 255, color.b * 255]
+	
+class RootToken extends Token:
+	func _to_string():
+		return "root"
+
+class LeftoverToken extends Token:
+	func _init(_content : String):
+		content = _content
+		color = Color.RED
+
+	func _to_string():
+		return "LeftoverToken(\"%s\")" % content
+
+class CommandToken extends Token:
+	var name : String
+	var argument : Argument
+	var node : ArgumentNode
+	var provided_autofill_entries : Array[String]
+
+	func _init(_name : String, _argument : Argument, _node : ArgumentNode, _color : Color, _content : String, _provided_autofill_entries : Array[String] = []):
+		name = _name
+		argument = _argument
+		node = _node
+		color = _color
+		content = _content
+		provided_autofill_entries = _provided_autofill_entries
+
+	func _to_string():
+		return "CommandToken(%s, %s, <%s>, \"%s\", %s)" % [name, argument, get_color_as_hex(), content, provided_autofill_entries]
+
+class TokenTreeNode extends RefCounted:
+	var token : Token
+	var children : Array[TokenTreeNode]
+
+	func _init(_token : Token, _children : Array[TokenTreeNode] = []):
+		token = _token
+		children = _children
+
+	func _to_string():
+		return "TokenTreeNode(%s, %s)" % [token, children]

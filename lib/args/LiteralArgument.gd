@@ -4,18 +4,26 @@ extends Argument
 var literal : StringName
 
 func _init(_literal : StringName, _optional = false):
-	literal = _literal
+	literal = _literal.to_lower()
 	super(_optional)
 
 func _to_string() -> String:
 	return "%s" % [literal]
 
-func is_equal(argument : Argument) -> bool:
+func _is_valid() -> bool:
+	return literal != ""
+
+func _is_equal(argument : Argument) -> bool:
 	if not argument is LiteralArgument: return false
-	return argument.literal.to_lower() == self.literal.to_lower()
+	if not argument.literal == self.literal: return false
+	return true
 
-func is_valid(_input : String) -> bool: 
-	return _input == literal
+func get_autofill_entries(_remaining_input : String) -> Array[String]:
+	if literal.begins_with(_remaining_input):
+		return [literal]
+	return []
 
-func is_autofill_candidate(_input) -> bool:
-	return literal.begins_with(_input)
+func get_satisfying_prefix(_remaining_input : String) -> String:
+	if _remaining_input.begins_with(literal + " "):
+		return literal
+	return ""

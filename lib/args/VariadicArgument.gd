@@ -7,11 +7,14 @@ func _init():
 func _to_string() -> String:
 	return "..."
 
-func is_equal(argument : Argument) -> bool:
-	return argument is VariadicArgument
-
-func is_valid(_input : String) -> bool:
+func _is_valid() -> bool:
 	return true
 
-func is_autofill_candidate(_input : String) -> bool:
-	return false
+func _is_equal(argument : Argument) -> bool:
+	return argument is VariadicArgument
+
+func get_autofill_entries(_remaining_input : String) -> Array[String]:
+	return [str(self)]
+
+func get_satisfying_prefix(_remaining_input : String) -> String:
+	return _remaining_input
