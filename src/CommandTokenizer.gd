@@ -50,10 +50,11 @@ static func _tokenize(
 			token.color = _COLORED_ARGS_COLOR_LIST[_colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
 
 		var treenode := TokenTreeNode.new(token)
-		for child in _working_node.children:
-			var child_node : TokenTreeNode = _tokenize(trimmed_input, child)
-			if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
-				treenode.children.push_back(child_node)
+		if _input.length() > satisfying_prefix.length():
+			for child in _working_node.children:
+				var child_node : TokenTreeNode = _tokenize(trimmed_input, child)
+				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
+					treenode.children.push_back(child_node)
 		return treenode
 	else:
 		var autofill_candidates : Array[String] = argument.get_autofill_entries(_input)

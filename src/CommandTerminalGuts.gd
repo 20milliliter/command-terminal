@@ -25,8 +25,23 @@ var last_input : String = ""
 var last_output : CommandTokenizer.TokenTreeNode
 func tokenizer_cache(new_text : String) -> CommandTokenizer.TokenTreeNode:
 	if new_text == last_input:
+		CommandTerminalLogger.log(3, ["TERMINAL", "TOKENIZE"], "Tokenization cache hit")
+		CommandTerminalLogger.log(3, ["TERMINAL", "TOKENIZE"], "Returning: \n%s" % [CommandTokenizer._print_tree(last_output)])
 		return last_output
 	else:
+		CommandTerminalLogger.log(3, ["TERMINAL", "TOKENIZE"], "Tokenization required for: %s" % [new_text])
 		last_input = new_text
 		last_output = CommandTokenizer.tokenize_input(new_text)
 		return last_output
+
+func get_all_complete_args(text : String) -> Array[String]:
+	CommandTerminalLogger.log(3, ["TERMINAL"], "Complete args requested for: %s" % [text])
+	var working_token_node : CommandTokenizer.TokenTreeNode = self.tokenizer_cache(text)
+	var args : Array[String] = []
+	while working_token_node.children.size() > 0:
+		working_token_node = working_token_node.children[0]
+		if not working_token_node.token is CommandTokenizer.CommandToken: continue
+		if not working_token_node.token.provided_autofill_entries.is_empty(): break
+		args.push_back(working_token_node.token.content)
+	CommandTerminalLogger.log(3, ["TERMINAL"], "Returning: %s" % [args])
+	return args
