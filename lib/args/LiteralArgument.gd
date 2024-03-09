@@ -1,6 +1,10 @@
 class_name LiteralArgument
 extends Argument
+## A [String] literal argument.
+##
+## A LiteralArgument is an argument represented by a [String] literal.
 
+## The literal value of the argument.
 var literal : StringName
 
 func _init(_literal : StringName, _optional : bool = false) -> void:

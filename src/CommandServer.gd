@@ -1,13 +1,21 @@
 #class_name CommandServer
 extends Node
+## The singleton that is the interface between the command-terminal plugin and the rest of the codebase.
+##
+## The CommandServer is a singleton that is the interface between the command-terminal plugin, the CommandTerminal control node, and the rest of the codebase.
+## It is responsible for registering commands, running commands, and handling errors.
 
 var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
+## Registers a new command with the CommandServer. Takes an ArgumentGraph to represent the command.
+## Use the provided [CommandBuilder] class to create an ArgumentGraph.
 func register_command(_argument_graph : ArgumentGraph) -> void:
 	CommandTerminalLogger.log(1, ["COMMAND"], "Registering command '%s'." % [_argument_graph.print_node_as_single()])
 	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
 	argument_graph.merge(_argument_graph)
 
+## Runs a command. Takes a string as input.
+## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
 func run_command(command : String) -> void:
 	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(command)
 	var end : CommandTokenizer.TokenTreeNode = tokentree.children.back()
@@ -36,6 +44,7 @@ var current_command : String = ""
 #var relevant_arg : String = ""
 
 var errors : Array[CommandError]
+## Pushes an error to the CommandServer. Takes a string as input.
 func push_error(error_message : String)	-> void:
 	_push_errorfull("", "", error_message)
 

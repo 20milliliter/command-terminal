@@ -1,7 +1,15 @@
 class_name KeyArgument
 extends Argument
 
+## A KeyArgument is an argument that can be one of a set of String keys.
+##
+## A KeyArgument is an argument that can be one of a set of String keys.
+## The set of possible keys is retrieved from a Callable, provided on initialization.
+## [b]Note:[/b] The set of possible keys is not fixed, the Callable may provide any set/subset arbitrarily.
+
+## The name of the argument.
 var name : StringName
+## The Callable that provides the set of possible keys.
 var keys_provider : Callable
 
 func _init(_name : StringName, _optional : bool = false, _keys_provider : Callable = Callable()) -> void:
