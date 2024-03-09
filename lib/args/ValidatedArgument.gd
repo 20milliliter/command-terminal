@@ -3,10 +3,12 @@ extends PeculiarArgument
 
 var name : StringName
 var validator : Callable
+var default_value: String
 
-func _init(_name : StringName, _optional = false, _validator : Callable = Callable()):
+func _init(_name : StringName, _optional = false, _validator : Callable = Callable(), _default_value : Variant = ""):
 	name = _name
 	validator = _validator
+	default_value = str(_default_value)
 	super(_optional)
 
 func _to_string() -> String:
@@ -24,7 +26,7 @@ func _is_equal(argument : Argument) -> bool:
 	return true
 
 func get_autofill_content() -> String:
-	return ""
+	return default_value
 
 func get_autofill_entries(_remaining_input : String) -> Array[String]:
 	if _remaining_input.find(" "):

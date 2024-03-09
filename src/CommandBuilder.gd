@@ -26,8 +26,8 @@ func Variadic() -> CommandBuilder:
 	self.add(ArgumentNode.new(VariadicArgument.new()))
 	return self
 
-func Validated(_key : StringName, _validator : Callable = Callable()) -> CommandBuilder:
-	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator)))
+func Validated(_key : StringName, _validator : Callable = Callable(), _default : Variant = "") -> CommandBuilder:
+	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator, _default)))
 	return self
 	
 func Key(_name : String, _autofill_provider : Callable, _validator : Callable = Callable()) -> CommandBuilder:

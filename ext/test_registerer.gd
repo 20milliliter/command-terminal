@@ -42,6 +42,10 @@ func _ready():
 		.Build()
 	)
 	CommandServer.register_command(
+		CommandBuilder.new().Literal("tp").Validated("x_position", is_valid_float, 0).Validated("y_position", is_valid_float, 0)
+		.Build()
+	)
+	CommandServer.register_command(
 		CommandBuilder.new()
 			.Literal("alpha")
 			.Branch()
