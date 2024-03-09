@@ -34,7 +34,7 @@ func get_autofill_content() -> String:
 	return default_value
 
 func get_autofill_entries(_remaining_input : String) -> Array[String]:
-	if _remaining_input.find(" "):
+	if get_satisfying_prefix(_remaining_input) != "" or _remaining_input == "":
 		return [str(self)]
 	return []
 

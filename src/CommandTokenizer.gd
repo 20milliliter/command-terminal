@@ -16,14 +16,14 @@ static func _tokenize(
 	
 	if _working_node is ArgumentGraph:
 		# Working node is root, skip to children
-		var treenode : TokenTreeNode = TokenTreeNode.new(RootToken.new())
+		var dummynode : TokenTreeNode = TokenTreeNode.new(RootToken.new())
 		for child : ArgumentNode in _working_node.children:
 			var child_node : TokenTreeNode = _tokenize(_input, child)
-			if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
-				treenode.children.push_back(child_node)
+			if (not child_node.token is LeftoverToken) or dummynode.children.size() == 0:
+				dummynode.children.push_back(child_node)
 			else:
 				CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "LeftoverToken pruned.") 
-		return treenode
+		return dummynode
 
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], 
 		"Trying '%s' against %s" % [_input, _working_node]
@@ -34,38 +34,43 @@ static func _tokenize(
 		str(_working_node.argument),
 		_working_node.argument,
 		_working_node,
-		Color.RED,
+		Color.WHITE,
 		_input
 	)
 
-	var satisfying_prefix : String = argument.get_satisfying_prefix(_input + " ")
+	var treenode : TokenTreeNode = TokenTreeNode.new(token)
+	var satisfying_prefix : String = argument.get_satisfying_prefix(_input)
+	var trimmed_input : String = _input
+	
 	if satisfying_prefix != "":
-		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "'%s' accepted." % [satisfying_prefix]) 
+		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "'%s' accepted." % [satisfying_prefix])
+		trimmed_input = _input.substr(satisfying_prefix.length())
 		token.content = satisfying_prefix
-		var trimmed_input : String = _input.substr(satisfying_prefix.length() + 1)
-
-		token.color = Color.WHITE
 		if _working_node.argument is ValidatedArgument or _working_node.argument is KeyArgument:
 			_colored_arg_count += 1
 			token.color = _COLORED_ARGS_COLOR_LIST[_colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
 
-		var treenode : TokenTreeNode = TokenTreeNode.new(token)
-		if _input.length() > satisfying_prefix.length():
+		if trimmed_input.length() > 0:
 			for child : ArgumentNode in _working_node.children:
-				var child_node : TokenTreeNode = _tokenize(trimmed_input, child)
+				var child_node : TokenTreeNode = _tokenize(trimmed_input.substr(1), child, _colored_arg_count)
 				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
 					treenode.children.push_back(child_node)
-		return treenode
-	else:
+			if _working_node.children.size() == 0:
+				treenode.children.push_back(TokenTreeNode.new(LeftoverToken.new(trimmed_input.substr(1))))
+
+	if satisfying_prefix == "" or trimmed_input == "":
 		var autofill_candidates : Array[String] = argument.get_autofill_entries(_input)
 		if autofill_candidates.size() > 0:
 			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Accepted as autofill possibility.")
-			token.color = Color.WHITE
 			token.provided_autofill_entries = autofill_candidates
 			return TokenTreeNode.new(token)
-		else:
+		if trimmed_input != "":
 			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Not accepted.")  
-			return TokenTreeNode.new(LeftoverToken.new(_input))
+			treenode.token = LeftoverToken.new(_input)
+
+	
+
+	return treenode
 
 const _COLORED_ARGS_COLOR_LIST : Array[String] = [
 	"#5FFAF8",
