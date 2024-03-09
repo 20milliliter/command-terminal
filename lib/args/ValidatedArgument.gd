@@ -1,5 +1,5 @@
 class_name ValidatedArgument
-extends Argument
+extends PeculiarArgument
 
 var name : StringName
 var validator : Callable
@@ -22,6 +22,9 @@ func _is_equal(argument : Argument) -> bool:
 	if not name == argument.name: return false
 	if not validator == argument.validator: return false
 	return true
+
+func get_autofill_content() -> String:
+	return ""
 
 func get_autofill_entries(_remaining_input : String) -> Array[String]:
 	if _remaining_input.find(" "):

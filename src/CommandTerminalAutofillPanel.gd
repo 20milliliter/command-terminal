@@ -10,22 +10,25 @@ func _ready():
 	terminal_panel.contents_altered.connect(refresh_autofill_contents)
 
 func refresh_autofill_contents(new_text : String):
-	CommandTerminalLogger.log(3, ["AUTOFILL"], "Autofilling for: %s" % [new_text])
+	CommandTerminalLogger.log(3, ["AUTOFILL"], "Getting autofill options for '%s'..." % [new_text])
 	fetch_autofill_entries(new_text)
-	CommandTerminalLogger.log(3, ["AUTOFILL"], "Fetched options: %s" % [autofill_entries])
+	CommandTerminalLogger.log(3, ["AUTOFILL"], "Fetched: %s" % [autofill_entries])
 	autofill_selected_index = -1
 	redraw_autofill_contents(new_text)
 
 var autofill_entries : Array[String] = []
-
+var autofill_entry_owners : Array[Argument] = []
 func fetch_autofill_entries(new_text):
 	var tokentreeroot : CommandTokenizer.TokenTreeNode = command_terminal_guts.tokenizer_cache(new_text)
 	autofill_entries.clear()
+	autofill_entry_owners.clear()
 	_fetch_autofill_entries(tokentreeroot)
 
 func _fetch_autofill_entries(_token_tree_node):
 	if _token_tree_node.token is CommandTokenizer.CommandToken:
-		autofill_entries.append_array(_token_tree_node.token.provided_autofill_entries)
+		for entry in _token_tree_node.token.provided_autofill_entries:
+			autofill_entries.append(entry)
+			autofill_entry_owners.append(_token_tree_node.token.argument)
 	for child in _token_tree_node.children:
 		_fetch_autofill_entries(child)
 
@@ -36,8 +39,12 @@ func _change_autofill_index(forward : bool):
 	if autofill_entries.is_empty(): return
 	autofill_selected_index -= 1 if forward else -1
 	autofill_selected_index = wrapi(autofill_selected_index, 0, len(autofill_entries))
+	var selected_owner = autofill_entry_owners[autofill_selected_index]
 	var autofill_text = autofill_entries[autofill_selected_index]
-	CommandTerminalLogger.log(3, ["AUTOFILL"], "Selected autofill: %s" % [autofill_text])
+	CommandTerminalLogger.log(3, ["AUTOFILL"], "Selected entry: %s" % [autofill_text])
+	if selected_owner is PeculiarArgument:
+		autofill_text = selected_owner.get_autofill_content()
+	CommandTerminalLogger.log(3, ["AUTOFILL"], "Autofilling: %s" % [autofill_text])
 	terminal_panel.autofill_text(autofill_text)
 	redraw_autofill_contents()
 

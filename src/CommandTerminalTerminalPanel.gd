@@ -46,7 +46,9 @@ func _paint_token(token : CommandTokenizer.Token) -> String:
 
 func append_autofill_suggestion():
 	var contents = autofill_panel.autofill_entries
+	var owners = autofill_panel.autofill_entry_owners
 	if contents.is_empty(): return
+	if owners[0] is PeculiarArgument: return
 	var autofill_result : String = contents[0]
 	var args = terminal_line_edit.text.split(" ")
 	var last_arg : String = args[len(args) - 1]

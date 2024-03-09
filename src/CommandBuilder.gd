@@ -56,7 +56,11 @@ func NextBranch() -> CommandBuilder:
 
 func EndBranch() -> CommandBuilder:
 	logger.log(2, ["COMMAND", "BUILDER"], "Ended current branch.")
-	upcoming_parents += branch_leaves_stack.pop_back()
+	var old_parents = branch_leaves_stack.pop_back()
+	if old_parents == null:
+		push_error("CommandBuilder Error: Tried to end a branch without starting one.")
+		return self
+	upcoming_parents += old_parents
 	branch_stack.pop_back()
 	logger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
 	return self

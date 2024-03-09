@@ -22,7 +22,7 @@ static func _tokenize(
 			if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
 				treenode.children.push_back(child_node)
 			else:
-				print("didnt add lol")
+				CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "LeftoverToken pruned.") 
 		return treenode
 
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], 
