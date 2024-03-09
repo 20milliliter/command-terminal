@@ -6,21 +6,19 @@ extends PanelContainer
 @export var command_line : RichTextLabel
 @export var command_line_entry : LineEdit
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
+func _ready() -> void:
 	command_line_entry.text_changed.connect(update_commandline_content)
 	command_line_entry.text_submitted.connect(process_command)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta : float) -> void:
 	if Input.is_action_pressed("ui_console"): command_line_entry.grab_focus()
 	
-func update_commandline_content(new_text : String):
+func update_commandline_content(new_text : String) -> void:
 	command_line.clear()
 	var text : String = ""
-	var args : PackedStringArray = new_text.split(" ")
-	for arg_index in range(0, len(args)):
-		var arg = args[arg_index]
+	var args : Array[String] = Array(new_text.split(" "))
+	for arg_index : int in range(0, len(args)):
+		var arg : String = args[arg_index]
 		if arg_index == len(args) - 1:
 			if len([]) == 0:
 				command_line.push_color(Color.RED)
@@ -34,7 +32,7 @@ func update_commandline_content(new_text : String):
 	text = text.replace("[", "[lb]")
 	command_line.text = text 
 
-func process_command(command : String):
+func process_command(command : String) -> void:
 	print_rich(command)
 	command_line.text = ""
 	command_line_entry.text = ""

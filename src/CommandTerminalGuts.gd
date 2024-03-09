@@ -13,8 +13,8 @@ var autofill_panel : CommandTerminalAutofillPanel :
 	get:
 		return self.get_node("%AUTOFILL-PANEL")
 
-func _ready():
-	var _console_key = ProjectSettings.get_setting("plugins/command_terminal/console_key_shortcut").duplicate()
+func _ready() -> void:
+	var _console_key : Resource = ProjectSettings.get_setting("plugins/command_terminal/console_key_shortcut").duplicate()
 	InputMap.add_action("ui_console")
 	InputMap.action_add_event("ui_console", _console_key)
 	CommandTerminalLogger.log(2, ["TERMINAL"], "Registered 'ui_console' to InputMap")

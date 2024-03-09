@@ -1,7 +1,7 @@
 class_name CommandTerminalPluginData
 
-const PLUGIN_ID := "command_terminal"
-const PLUGIN_PATH := "plugins/" + PLUGIN_ID + "/"
+const PLUGIN_ID : String = "command_terminal"
+const PLUGIN_PATH : String = "plugins/" + PLUGIN_ID + "/"
 
 var PROJECT_SETTINGS : Array = [
 	{

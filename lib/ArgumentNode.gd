@@ -7,7 +7,12 @@ var callback : Callable
 var parents :  Array[ArgumentNode]
 var children : Array[ArgumentNode]
 
-func _init(_argument, _callback = Callable(), _parents : Array[ArgumentNode] = [], _children : Array[ArgumentNode] = []):
+func _init(
+		_argument : Argument, 
+		_callback : Callable = Callable(), 
+		_parents : Array[ArgumentNode] = [],
+		_children : Array[ArgumentNode] = []
+	) -> void:
 	argument = _argument
 	callback = _callback
 	parents = _parents
@@ -22,16 +27,16 @@ func _to_string() -> String:
 func is_equal(node : ArgumentNode) -> bool:
 	return self.argument._is_equal(node.argument)
 
-func add_child(node : ArgumentNode):
+func add_child(node : ArgumentNode) -> void:
 	self.children.append(node)
 	node.parents.append(self)
 
-func remove_child(node : ArgumentNode):
+func remove_child(node : ArgumentNode) -> void:
 	self.children.erase(node)
 	node.parents.erase(self)
 
-func reparent(new_parents : Array[ArgumentNode] = []):
-	for parent in parents.duplicate():
+func reparent(new_parents : Array[ArgumentNode] = []) -> void:
+	for parent : ArgumentNode in parents.duplicate():
 		parent.remove_child(self)
-	for parent in new_parents:
+	for parent : ArgumentNode in new_parents:
 		parent.add_child(self)

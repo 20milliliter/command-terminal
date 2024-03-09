@@ -1,6 +1,6 @@
 extends Node
 
-func _ready():
+func _ready() -> void:
 	CommandServer.register_command(
 		CommandBuilder.new().Literal("dmx").Literal("devices").Literal("list").Callback(dmx_devices_list).Build()
 	)
@@ -66,7 +66,7 @@ func _ready():
 		.Build()
 	)
 
-func channel_check(args):
+func channel_check(args : Array[String]) -> void:
 	print("Checking channel %s" % [args[2]])
 
 func is_valid_position(_input : String) -> bool: 
@@ -82,7 +82,7 @@ func is_valid_dmx_value(input : String) -> bool:
 	if not input.is_valid_int():
 		CommandServer.push_error("Not an integer")
 		return false
-	var input_int = int(input)
+	var input_int :int = int(input)
 	if input_int < 0 or input_int > 255:
 		CommandServer.push_error("DMX value outside of range (0-255)")
 		return false
@@ -92,7 +92,7 @@ func is_valid_channel_index(input : String) -> bool:
 	if not input.is_valid_int():
 		CommandServer.push_error("Not an integer")
 		return false
-	var input_int = int(input)
+	var input_int : int = int(input)
 	if input_int < 0 or input_int > 512:
 		CommandServer.push_error("Channel index outside of range (0-512)")
 		return false
@@ -102,7 +102,7 @@ func is_valid_universe_index(input : String) -> bool:
 	if not input.is_valid_int():
 		CommandServer.push_error("Not an integer")
 		return false
-	var input_int = int(input)
+	var input_int :int = int(input)
 	if input_int < 0 or input_int > 63999:
 		CommandServer.push_error("Universe index outside of range (0-63999)")
 		return false
@@ -115,19 +115,20 @@ var devices_list : Array[String] = [
 	"fog-machine",
 ]
 
-func get_dmx_devices_list():
+func get_dmx_devices_list() -> Array[String]:
 	return devices_list
 
-func dmx_devices_list(_args):
+func dmx_devices_list(_args : Array[String]) -> void:
 	print("Listing devices...")
 
-func dmx_devices_push(args):
-	var device_name = args[2]
-	var remaning_args = args.slice(4)
+func dmx_devices_push(args : Array[String]) -> void:
+	var device_name : String = args[2]
+	var remaning_args : Array[String] = []
+	remaning_args.assign(args.slice(4))
 	print("Pushing %s to device '%s'..." % [remaning_args, device_name])
 
-func dmx_override_clear(_args):
+func dmx_override_clear(_args : Array[String]) -> void:
 	print("Clearing overrides...")
 
-func dmx_override(_args):
+func dmx_override(_args : Array[String]) -> void:
 	print("Uh uh uhm...")

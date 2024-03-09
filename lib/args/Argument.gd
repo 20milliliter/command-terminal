@@ -3,7 +3,7 @@ extends Object
 
 var optional : bool
 
-func _init(_optional = false):
+func _init(_optional : bool = false) -> void:
 	optional = _optional
 
 func _to_string() -> String: #virtual
@@ -14,7 +14,7 @@ func _is_valid() -> bool: #virtual
 	assert(false, "'_is_valid()' called on Argument that does not implement it.")
 	return false
 
-func _is_equal(argument : Argument) -> bool: #virtual
+func _is_equal(_argument : Argument) -> bool: #virtual
 	assert(false, "'_is_equal()' called on Argument that does not implement it.")
 	return false
 

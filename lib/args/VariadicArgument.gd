@@ -1,7 +1,7 @@
 class_name VariadicArgument
 extends PeculiarArgument
 
-func _init():
+func _init() -> void:
 	super()
 
 func _to_string() -> String:

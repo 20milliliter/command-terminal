@@ -5,7 +5,12 @@ var name : StringName
 var validator : Callable
 var default_value: String
 
-func _init(_name : StringName, _optional = false, _validator : Callable = Callable(), _default_value : Variant = ""):
+func _init(
+		_name : StringName, 
+		_optional : bool = false, 
+		_validator : Callable = Callable(), 
+		_default_value : Variant = ""
+	) -> void:
 	name = _name
 	validator = _validator
 	default_value = str(_default_value)
@@ -15,7 +20,7 @@ func _to_string() -> String:
 	return "<%s>" % [name]
 
 func _is_valid() -> bool:
-	var validator_output = validator.call()
+	var validator_output : Variant = validator.call()
 	if not validator_output is bool: return false
 	return true
 

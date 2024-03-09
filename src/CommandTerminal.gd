@@ -14,11 +14,11 @@ extends Control
 
 var guts : Node
 
-func _process(_delta):
+func _process(_delta : float) -> void:
 	_first_time_setup()
 	_handle_editor_properties()
 
-func _first_time_setup():
+func _first_time_setup() -> void:
 	if self.has_node("__guts__"): 
 		guts = self.get_node("__guts__")
 		return
@@ -31,7 +31,7 @@ func _first_time_setup():
 	guts.call_deferred("set_anchors_and_offsets_preset", PRESET_FULL_RECT)
 	self.call_deferred("set_anchors_and_offsets_preset", PRESET_BOTTOM_WIDE)
 
-func _handle_editor_properties():
+func _handle_editor_properties() -> void:
 	if autofill_panel_styling:
 		guts.get_node("%AUTOFILL-PANEL").add_theme_stylebox_override("panel", autofill_panel_styling)
 	else:
