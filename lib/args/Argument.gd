@@ -1,6 +1,10 @@
 class_name Argument
 extends Object
+## The abstract base class for Argument types.
+##
+## The abstract base class for Argument types.
 
+## Whether the argument is optional or not.
 var optional : bool
 
 func _init(_optional : bool = false) -> void:

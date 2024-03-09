@@ -1,15 +1,21 @@
 @icon("res://addons/command-terminal/ast/CommandTerminal.svg")
 @tool
-## Control that implements UI access to the CommandTerminal plugin's CommandServer, allowing for entering and running commands
+## A control that displays a UI for entering and running commands
+##
+## A control that displays a UI for entering and running commands. It accesses the plugin's CommandServer singleton.
 class_name CommandTerminal
 extends Control
 
 @export_group("Font")
+## The font to use in the terminal.
 @export var font : Font = load("res://addons/command-terminal/ast/windows_command_prompt.ttf")
+## The font size to use in the terminal.
 @export var font_size : int = 12
 
 @export_group("Theming")
+## The [StyleBox]es to use for the terminal panel.
 @export var terminal_panel_styling : StyleBox
+## The [StyleBox]es to use for the autofill panel.
 @export var autofill_panel_styling : StyleBox
 
 var guts : Node
