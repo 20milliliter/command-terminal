@@ -26,9 +26,9 @@ func Literal(_literal : StringName) -> CommandBuilder:
 	self.add(ArgumentNode.new(LiteralArgument.new(_literal, optional)))
 	return self
 
-## Adds a [VariadicArgument] to the command.
-func Variadic() -> CommandBuilder:
-	self.add(ArgumentNode.new(VariadicArgument.new()))
+## Adds a [KeyArgument] to the command.
+func Key(_name : String, _autofill_provider : Callable) -> CommandBuilder:
+	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _autofill_provider)))
 	return self
 
 ## Adds a [ValidatedArgument] to the command.
@@ -36,9 +36,9 @@ func Validated(_key : StringName, _validator : Callable = Callable(), _default :
 	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator, _default)))
 	return self
 
-## Adds a [KeyArgument] to the command.
-func Key(_name : String, _autofill_provider : Callable) -> CommandBuilder:
-	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _autofill_provider)))
+## Adds a [VariadicArgument] to the command.
+func Variadic() -> CommandBuilder:
+	self.add(ArgumentNode.new(VariadicArgument.new()))
 	return self
 
 ## Creates a branch.[br]

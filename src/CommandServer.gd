@@ -9,10 +9,10 @@ var argument_graph : ArgumentGraph = ArgumentGraph.new()
 
 ## Registers a new command with the CommandServer. Takes an ArgumentGraph to represent the command.
 ## Use the provided [CommandBuilder] class to create an ArgumentGraph.
-func register_command(_argument_graph : ArgumentGraph) -> void:
-	CommandTerminalLogger.log(1, ["COMMAND"], "Registering command '%s'." % [_argument_graph.print_node_as_single()])
-	#if ArgumentGraphValidator.is_valid_graph(_argument_graph)
-	argument_graph.merge(_argument_graph)
+func register_command(command_graph : ArgumentGraph) -> void:
+	CommandTerminalLogger.log(1, ["COMMAND"], "Registering command '%s'." % [command_graph.print_node_as_single()])
+	#if ArgumentGraphValidator.is_valid_graph(command_graph)
+	argument_graph.merge(command_graph)
 
 ## Runs a command. Takes a string as input.
 ## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
