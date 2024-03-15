@@ -24,21 +24,27 @@ func run_command(command : String) -> void:
 	var graph_nav : ArgumentNode = end.token.node
 	if graph_nav == null: return
 	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
-	var callback : Callable = _navigate_to_most_recent_callback(graph_nav)
-	if callback.is_null(): return
+	var callback_holder : ArgumentNode = _navigate_to_most_recent_callback_holder(graph_nav)
+	if callback_holder == null: return
+	var callback : Callable = callback_holder.callback
+	CommandTerminalLogger.log(3, ["COMMAND"], "Mapping arguments...")
+	var command_args : PackedStringArray = command.split(" ")
+	var callback_args : Array[String] = []
+	for arg_idx : int in callback_holder.callback_mapping.mapping:
+		callback_args.append(command_args[arg_idx])
 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
-	callback.call(command.split(" "))
+	callback.callv(callback_args)
 
-func _navigate_to_most_recent_callback(node : ArgumentNode) -> Callable:
+func _navigate_to_most_recent_callback_holder(node : ArgumentNode) -> ArgumentNode:
 	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to most recent callback.")
 	while len(node.parents) > 0:
 		if not node.callback.is_null():
 			CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Callback found.")
-			return node.callback
+			return node
 		node = node.parents[0]
 		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to parent '%s'" % [node])
-		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
-	return Callable()
+	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
+	return null
 
 var current_command : String = ""
 #var relevant_arg : String = ""
