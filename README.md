@@ -12,9 +12,11 @@ CommandTerminal is an addon for Godot 4 that manages a user-created Command Line
 	- Autocompletion out of the box!
 
 ## Usage
-1. Place a CommandLine node in your UI.
-2. Call `CommandServer.register_command()` with command structure and a callback which implements the command.
-3. Enter the command into the CommandLine.
+0. Install and enable the addon
+1. Verify plugin settings 
+2. Create a function which implements a command
+3. Register that command with the `CommandServer`
+4. Create a `CommandTerminal` node in your scene, or call `CommandServer.run_command()` directly
 
 ## Installation
 
