@@ -8,7 +8,8 @@ func _ready() -> void:
 		CommandBuilder.new().Literal("dmx").Literal("override").Literal("clear").Callback(dmx_override_clear).Build()
 	)
 	CommandServer.register_command(
-		CommandBuilder.new().Literal("dmx").Literal("devices").Key("device_name", get_dmx_devices_list).Literal("push").Variadic().Callback(dmx_devices_push).Build()
+		CommandBuilder.new().Literal("dmx").Literal("devices").Key("device_name", get_dmx_devices_list).Literal("push").Variadic().Callback(dmx_devices_push, CallbackArgumentMapping.new([2, 4]))
+		.Build()
 	)
 	CommandServer.register_command(
 		CommandBuilder.new().Literal("dmx").Literal("channel").Validated("channel_index", is_valid_channel_index).Literal("check").Callback(channel_check).Build()
@@ -118,17 +119,14 @@ var devices_list : Array[String] = [
 func get_dmx_devices_list() -> Array[String]:
 	return devices_list
 
-func dmx_devices_list(_args : Array[String]) -> void:
+func dmx_devices_list() -> void:
 	print("Listing devices...")
 
-func dmx_devices_push(args : Array[String]) -> void:
-	var device_name : String = args[2]
-	var remaning_args : Array[String] = []
-	remaning_args.assign(args.slice(4))
-	print("Pushing %s to device '%s'..." % [remaning_args, device_name])
+func dmx_devices_push(device_name : String, message : String) -> void:
+	print("Pushing %s to device '%s'..." % [message, device_name])
 
-func dmx_override_clear(_args : Array[String]) -> void:
+func dmx_override_clear() -> void:
 	print("Clearing overrides...")
 
-func dmx_override(_args : Array[String]) -> void:
+func dmx_override() -> void:
 	print("Uh uh uhm...")

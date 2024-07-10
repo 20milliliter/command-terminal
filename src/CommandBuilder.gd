@@ -73,9 +73,10 @@ func EndBranch() -> CommandBuilder:
 ## Adds a callback to the command at the current position.[br]
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
 ## Multiple callbacks can be added to a single command at different positions if desired.
-func Callback(_callback : Callable) -> CommandBuilder:
+func Callback(_callback : Callable, _mapping : CallbackArgumentMapping = CallbackArgumentMapping.VOID) -> CommandBuilder:
 	for node : ArgumentNode in upcoming_parents:
 		node.callback = _callback
+		node.callback_mapping = _mapping
 	return self
 
 ## Signals that every following argument is optional.

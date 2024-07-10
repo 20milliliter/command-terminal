@@ -3,6 +3,7 @@ extends Object
 
 var argument : Argument
 var callback : Callable
+var callback_mapping : CallbackArgumentMapping
 
 var parents :  Array[ArgumentNode]
 var children : Array[ArgumentNode]
