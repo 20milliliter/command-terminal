@@ -1,6 +1,6 @@
 # command-terminal
 
-CommandTerminal is an addon for Godot 4 that manages a user-created Command Line. Commands can be registered from anywhere in the codebase with `CommandServer.register_command()` and executed from a CommandLine control node to be placed in your project.
+CommandTerminal is an addon for Godot 4 that manages a developer-created Command Line. Commands can be registered from anywhere in the codebase with `CommandServer.register_command()` and executed from a CommandLine control node to be placed in your project.
 
 ## Features
 
