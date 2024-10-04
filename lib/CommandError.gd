@@ -1,5 +1,5 @@
 class_name CommandError
-extends Object
+extends RefCounted
 
 var attempted_command : String
 var argument : String

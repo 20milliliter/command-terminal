@@ -1,9 +1,9 @@
 class_name ArgumentNode
-extends Object
+extends RefCounted
 
 var argument : Argument
 var callback : Callable
-var callback_mapping : CallbackArgumentMapping
+var callback_tag_names : Array[StringName]
 
 var parents :  Array[ArgumentNode]
 var children : Array[ArgumentNode]

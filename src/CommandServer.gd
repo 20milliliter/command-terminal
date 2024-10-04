@@ -14,37 +14,72 @@ func register_command(command_graph : ArgumentGraph) -> void:
 	#if ArgumentGraphValidator.is_valid_graph(command_graph)
 	argument_graph.merge(command_graph)
 
+var parsers : Dictionary = {} #[StringName, Callable]
+## Registers a new parser with the CommandServer. Takes a StringName of the type to parse and the callable to call.
+## Provided callable should take only one argument, a String, and return type specified by `type`.
+func register_parser(type : StringName, parser : Callable) -> void:
+	parsers[type] = parser
+
 ## Runs a command. Takes a string as input.
 ## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
 func run_command(command : String) -> void:
 	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(command)
-	var end : CommandTokenizer.TokenTreeNode = tokentree.children.back()
-	while end.children.size() > 0:
-		end = end.children.back()
-	var graph_nav : ArgumentNode = end.token.node
-	if graph_nav == null: return
-	CommandTerminalLogger.log(3, ["COMMAND"], "Locating callable.")
-	var callback_holder : ArgumentNode = _navigate_to_most_recent_callback_holder(graph_nav)
-	if callback_holder == null: return
-	var callback : Callable = callback_holder.callback
-	CommandTerminalLogger.log(3, ["COMMAND"], "Mapping arguments...")
-	var command_args : PackedStringArray = command.split(" ")
-	var callback_args : Array[String] = []
-	for arg_idx : int in callback_holder.callback_mapping.mapping:
-		callback_args.append(command_args[arg_idx])
-	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
-	callback.callv(callback_args)
 
-func _navigate_to_most_recent_callback_holder(node : ArgumentNode) -> ArgumentNode:
-	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to most recent callback.")
-	while len(node.parents) > 0:
-		if not node.callback.is_null():
-			CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Callback found.")
-			return node
-		node = node.parents[0]
-		CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "Navigating to parent '%s'" % [node])
-	CommandTerminalLogger.log(3, ["COMMAND", "NAVIGATION"], "No callback found.")
-	return null
+	var most_recent_callback_holder : ArgumentNode = null
+	var tag_map : Dictionary = {} #[StringName, CommandTokenizer.Token] 
+	var working_tokennode : CommandTokenizer.TokenTreeNode = tokentree
+	CommandTerminalLogger.log(3, ["COMMAND"], "Navigating tokentree for callback and tagged args.")
+	while true:
+		if working_tokennode.token is CommandTokenizer.CommandToken: 
+			var arg_node : ArgumentNode = working_tokennode.token.node
+			if not working_tokennode.token.node.callback.is_null():
+				CommandTerminalLogger.log(3, ["COMMAND"], "Found arg '%s' with callback '%s'." % [arg_node.argument, arg_node.callback])
+				most_recent_callback_holder = arg_node
+			if working_tokennode.token.node.argument.tag != null:
+				CommandTerminalLogger.log(3, ["COMMAND"], "Found arg '%s' with tag '%s'." % [working_tokennode.token.name, arg_node.argument.tag.name])
+				tag_map[arg_node.argument.tag.name] = working_tokennode.token
+		if working_tokennode.children.size() == 0: break
+		working_tokennode = working_tokennode.children.front()
+
+	CommandTerminalLogger.log(3, ["COMMAND"], "Handling callback arguments.")
+	var callback : Callable = most_recent_callback_holder.callback
+	var callback_arguments : Array[Variant] = []
+	if most_recent_callback_holder.callback_tag_names.size() > 0:
+		CommandTerminalLogger.log(3, ["COMMAND"], "Parsing callback arguments...")
+		for tag_name : StringName in most_recent_callback_holder.callback_tag_names:
+			if tag_map.has(tag_name):
+				var tag_token : CommandTokenizer.Token = tag_map[tag_name]
+				var tag : ArgumentTag = tag_token.node.argument.tag
+				if tag.type == "String":
+					callback_arguments.append(tag_token.content)
+				elif tag.type == "StringName":
+					callback_arguments.append(StringName(tag_token.content))
+				else:
+					var parser : Callable = tag.parser
+
+					if parser.is_null():
+						if parsers.has(tag.type):
+							parser = parsers[tag.type]
+						else:
+							CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Tag '%s' includes no parser, and none is registered to CommandServer. Null provided." % [tag.name])
+							callback_arguments.append(null)
+							continue
+
+					if parser.get_argument_count() != 1:
+						CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Parser for tag '%s' of type '%s' is invalid, accepting %s arguments when 1 is expected. Null provided." % [tag.name, tag.type, parser.get_argument_count()])
+						callback_arguments.append(null)
+						continue
+
+					var parsed_value : Variant = parser.call(tag_token.content)
+					callback_arguments.append(parsed_value)
+			else:
+				CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Callback requested tag which does not exist. Null provided.")
+				callback_arguments.append(null)
+	else:
+		CommandTerminalLogger.log(3, ["COMMAND"], "No callback arguments requested.")
+	
+	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
+	callback.callv(callback_arguments)
 
 var current_command : String = ""
 #var relevant_arg : String = ""

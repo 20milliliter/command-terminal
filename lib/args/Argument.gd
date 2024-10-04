@@ -1,11 +1,14 @@
 class_name Argument
-extends Object
+extends RefCounted
 ## The abstract base class for Argument types.
 ##
 ## The abstract base class for Argument types.
 
 ## Whether the argument is optional or not.
 var optional : bool
+
+## The argument's tag, if it has one.
+var tag : ArgumentTag
 
 func _init(_optional : bool = false) -> void:
 	optional = _optional
