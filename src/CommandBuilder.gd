@@ -70,13 +70,48 @@ func EndBranch() -> CommandBuilder:
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
 	return self
 
+func _bad_tag_target() -> bool:
+	if upcoming_parents.size() > 1: 
+		CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "WARNING: Cannot tag the end of a branch. Tag not applied.")
+		return true
+	elif upcoming_parents.is_empty():
+		CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "WARNING: Must tag an arg, not nothing. Tag not applied.")
+		return true
+	return false
+
+## Tags the previous argument.
+func Tag(name : StringName, type : StringName, parser : Callable = Callable()) -> CommandBuilder:
+	if _bad_tag_target(): return self
+	upcoming_parents[0].tag = ArgumentTag.new(name, type, parser)
+	return self
+
+## Tags the previous argument, assuming the tag name as the argument's "given name".
+func Tag_gn(type : StringName, parser : Callable = Callable()) -> CommandBuilder:
+	if _bad_tag_target(): return self
+	var arg : Argument = upcoming_parents[0].argument
+	var tag_name : StringName = ""
+	if arg is LiteralArgument:
+		tag_name = arg.literal
+	elif arg is KeyArgument:
+		tag_name = arg.name
+	elif arg is ValidatedArgument:
+		tag_name = arg.name
+	elif arg is VariadicArgument:
+		tag_name = "..."
+	arg.tag = ArgumentTag.new(tag_name, type, parser)
+	return self
+
+## Tags the previous argument, assuming the tag name as the argument's "given name", and assuming the type to be "StringName".
+func Tag_gnsn(parser : Callable = Callable()) -> CommandBuilder:
+	return Tag_gn("StringName", parser)
+
 ## Adds a callback to the command at the current position.[br]
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
 ## Multiple callbacks can be added to a single command at different positions if desired.
-func Callback(_callback : Callable, _mapping : CallbackArgumentMapping = CallbackArgumentMapping.VOID) -> CommandBuilder:
+func Callback(_callback : Callable, _tag_array : Array[StringName] = []) -> CommandBuilder:
 	for node : ArgumentNode in upcoming_parents:
 		node.callback = _callback
-		node.callback_mapping = _mapping
+		node.callback_tag_names = _tag_array
 	return self
 
 ## Signals that every following argument is optional.
@@ -85,7 +120,7 @@ func Optional() -> CommandBuilder:
 	return self
 
 ## Returns the built ArgumentGraph.
-## Doing anything with this except immediately giving it to [CommandServer.register_command] is not recommended.
+## Doing anything with this except immediately giving it to [method CommandServer.register_command] is not recommended.
 func Build() -> ArgumentGraph:
 	return root
 
