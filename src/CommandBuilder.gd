@@ -102,7 +102,7 @@ func Tag_gn(type : StringName, parser : Callable = Callable()) -> CommandBuilder
 	return self
 
 ## Tags the previous argument, assuming the tag name as the argument's "given name", and assuming the type to be "StringName".
-func Tag_gnsn(parser : Callable = Callable()) -> CommandBuilder:
+func Tag_gnst(parser : Callable = Callable()) -> CommandBuilder:
 	return Tag_gn("StringName", parser)
 
 ## Adds a callback to the command at the current position.[br]
