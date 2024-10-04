@@ -2,7 +2,7 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://hq55wfhqowq1"
+uid="uid://cmmltma2gsu3a"
 path="res://.godot/imported/windows_command_prompt.ttf-c1cc442a5df9e22391fd681dab4b5c82.fontdata"
 
 [deps]
@@ -14,15 +14,16 @@ dest_files=["res://.godot/imported/windows_command_prompt.ttf-c1cc442a5df9e22391
 
 Rendering=null
 antialiasing=0
-generate_mipmaps=true
+generate_mipmaps=false
+disable_embedded_bitmaps=true
 multichannel_signed_distance_field=false
 msdf_pixel_range=8
 msdf_size=48
-allow_system_fallback=false
+allow_system_fallback=true
 force_autohinter=false
 hinting=1
 subpixel_positioning=0
-oversampling=4.0
+oversampling=0.0
 Fallbacks=null
 fallbacks=[]
 Compress=null
