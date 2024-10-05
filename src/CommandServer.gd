@@ -41,6 +41,10 @@ func run_command(command : String) -> void:
 		if working_tokennode.children.size() == 0: break
 		working_tokennode = working_tokennode.children.front()
 
+	if most_recent_callback_holder == null:
+		CommandTerminalLogger.log(3, ["COMMAND"], "No callback found. Command is invalid.")
+		return
+
 	CommandTerminalLogger.log(3, ["COMMAND"], "Handling callback arguments.")
 	var callback : Callable = most_recent_callback_holder.callback
 	var callback_arguments : Array[Variant] = []
