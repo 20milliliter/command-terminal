@@ -82,7 +82,7 @@ func _bad_tag_target() -> bool:
 ## Tags the previous argument.
 func Tag(name : StringName, type : StringName, parser : Callable = Callable()) -> CommandBuilder:
 	if _bad_tag_target(): return self
-	upcoming_parents[0].tag = ArgumentTag.new(name, type, parser)
+	upcoming_parents[0].argument.tag = ArgumentTag.new(name, type, parser)
 	return self
 
 ## Tags the previous argument, assuming the tag name as the argument's "given name".
