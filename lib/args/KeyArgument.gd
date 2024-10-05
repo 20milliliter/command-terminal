@@ -22,7 +22,7 @@ func _to_string() -> String:
 
 func _is_valid() -> bool:
 	var keys_provider_output : Variant = keys_provider.call()
-	if not keys_provider_output is Array[String]: return false
+	if not keys_provider_output is Array[StringName]: return false
 	return true
 
 func _is_equal(argument : Argument) -> bool:
@@ -32,16 +32,18 @@ func _is_equal(argument : Argument) -> bool:
 	return true
 		
 func get_autofill_entries(_remaining_input : String) -> Array[String]:
-	var keys : Array[String] = keys_provider.call()
+	var keys : Array[StringName] = []
+	keys.assign(keys_provider.call())
 	var candidate_keys : Array[String] = []
-	for key : String in keys:
+	for key : StringName in keys:
 		if key.begins_with(_remaining_input):
 			candidate_keys.append(key)
 	return candidate_keys
 
 func get_satisfying_prefix(_remaining_input : String) -> String:
-	var keys : Array[String] = keys_provider.call()
-	for key : String in keys:
+	var keys : Array[StringName] = []
+	keys.assign(keys_provider.call())
+	for key : StringName in keys:
 		if _remaining_input.begins_with(key + " "):
 			return key
 	return ""
