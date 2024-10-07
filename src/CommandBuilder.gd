@@ -101,6 +101,10 @@ func Tag_gn(type : StringName, parser : Callable = Callable()) -> CommandBuilder
 	arg.tag = ArgumentTag.new(tag_name, type, parser)
 	return self
 
+## Tags the previous argument, assuming the type to be "StringName".
+func Tag_st(name : StringName, parser : Callable = Callable()) -> CommandBuilder:
+	return Tag(name, "StringName", parser)
+
 ## Tags the previous argument, assuming the tag name as the argument's "given name", and assuming the type to be "StringName".
 func Tag_gnst(parser : Callable = Callable()) -> CommandBuilder:
 	return Tag_gn("StringName", parser)
