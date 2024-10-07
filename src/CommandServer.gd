@@ -23,6 +23,7 @@ func register_parser(type : StringName, parser : Callable) -> void:
 ## Runs a command. Takes a string as input.
 ## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
 func run_command(command : String) -> void:
+	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'." % [command])
 	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(command)
 
 	var most_recent_callback_holder : ArgumentNode = null
