@@ -31,6 +31,7 @@ func _ready() -> void:
 
 func _paint_terminal_text(text : String) -> String:
 	var tokentree : CommandTokenizer.TokenTreeNode = command_terminal_guts.tokenizer_cache(text)
+	if tokentree == null: return text
 	CommandTerminalLogger.log(2, ["TERMINAL","PAINTING"], "Painting '%s'." % [text]) 
 	var paints : Array[String] = []
 	var working_tree_node : CommandTokenizer.TokenTreeNode = tokentree

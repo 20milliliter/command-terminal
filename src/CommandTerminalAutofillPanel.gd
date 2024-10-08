@@ -25,6 +25,7 @@ func fetch_autofill_entries(new_text : String) -> void:
 	_fetch_autofill_entries(tokentreeroot)
 
 func _fetch_autofill_entries(_token_tree_node : CommandTokenizer.TokenTreeNode) -> void:
+	if _token_tree_node == null: return
 	if _token_tree_node.token is CommandTokenizer.CommandToken:
 		for entry : String in _token_tree_node.token.provided_autofill_entries:
 			autofill_entries.append(entry)

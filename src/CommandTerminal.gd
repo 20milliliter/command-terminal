@@ -18,7 +18,7 @@ extends Control
 ## The [StyleBox]es to use for the autofill panel.
 @export var autofill_panel_styling : StyleBox
 
-var guts : Node
+@onready var guts : Node = self.get_node("__guts__")
 
 func _process(_delta : float) -> void:
 	_first_time_setup()

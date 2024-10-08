@@ -90,6 +90,8 @@ static func _clean_leftovers(node : TokenTreeNode) -> void:
 
 static func _print_tree(node : TokenTreeNode, depth : int = 0) -> String:
 	var content : String
+	if node == null:
+		return "null"
 	if node.token != null:
 		content = str(node.token)
 	else:
