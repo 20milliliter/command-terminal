@@ -53,7 +53,11 @@ func Branch() -> CommandBuilder:
 ## Signals to create the next path of a branch. 
 func NextBranch() -> CommandBuilder:
 	CommandTerminalLogger.log(2, ["COMMAND", "BUILDER"], "Next branch...")
-	branch_leaves_stack.append(upcoming_parents)
+	var branch_leaves : Array[ArgumentNode] = []
+	if branch_leaves_stack.size() > 0:
+		branch_leaves = branch_leaves_stack.pop_back()
+	branch_leaves.append_array(upcoming_parents)
+	branch_leaves_stack.push_back(branch_leaves)
 	upcoming_parents = branch_stack.back()
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Updated BranchLeaves stack: %s" % [branch_leaves_stack.back()])
 	return self
