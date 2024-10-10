@@ -77,4 +77,6 @@ func _input(event : InputEvent) -> void:
 
 func _process(_delta : float) -> void:
 	if Input.is_action_just_pressed("ui_console"):
+		var window_owner : Window = get_tree().get_root()
+		window_owner.grab_focus() #TODO: project setting conditional
 		terminal_line_edit.grab_focus()
