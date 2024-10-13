@@ -38,17 +38,19 @@ CommandBuilder.new()
 
 ## Key
 
-A Key Argument is an argument that can be one of a set of String keys.
+A Key Argument is an argument that can be one of a set of StringName keys.
 The set of possible keys is retrieved from a Callable, provided on initialization.
 
 _**Note:** The set of possible keys is not fixed, the Callable may provide any set/subset arbitrarily._
 
 ### Examples
 ```gdscript
-var weekday_names : Array[String] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+var weekday_names : Array[StringName] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 # time weekday set <day>
 CommandBuilder.new()
-    .Literal("time").Literal("weekday").Literal("set").Key("day", func() -> Array[String]: return weekday_names).Callback(set_weekday)
+    .Literal("time").Literal("day").Literal("set")
+	.Key("day", func() -> Array[StringName]: return weekday_names).Tag_gnst()
+	.Callback(set_weekday, ["day"])
 .Build()
 ```
 ```gdscript
@@ -57,8 +59,8 @@ CommandBuilder.new()
     .Literal("object")
         # Even if the objects in the scene changes, 
         # this list will always be updated by repeatedly calling get_objects_in_scene()
-    .Key("object_name", get_objects_in_scene) 
-    .Literal("destroy").Callback(destroy_scene_object)
+    .Key("object_name", get_objects_in_scene).Tag_gn("Object")
+    .Literal("destroy").Callback(destroy_scene_object, ["object_name"])
 .Build()
 
 func get_objects_in_scene() -> Array[String]:
@@ -73,12 +75,13 @@ CommandBuilder.new()
     .Literal("server").Literal("players")
         # Same here. If MultiplayerManager.player_names doesn't contain a
         # player because they quit, the terminal will mirror that update.
-    .Key("player_name", MultiplayerManager.get.bind("player_names")) 
-        # Note: binding get() is "cleaner" than a lambda but definitely slower.
+    .Key("player_name", MultiplayerManager.get.bind("player_names"))
+        # Note: binding get() is "cleaner" than a lambda but slower.
+	.Tag("player_id", "int", MultiplayerManager.player_names_to_peer_id_dictionary.get)
         .Branch()
-            .Literal("kick").Callback(MultiplayerManager.kick_player)
+            .Literal("kick").Callback(MultiplayerManager.kick_player, ["player_id"])
         .NextBranch()
-            .Literal("ban").Callback(MultiplayerManager.ban_player)
+            .Literal("ban").Callback(MultiplayerManager.ban_player, ["player_id"])
         .EndBranch()
 .Build()
 ```
@@ -92,24 +95,24 @@ It's primary use-case is for numerical arguments.
 ```gdscript
 # set lifeCount <lives>
 CommandBuilder.new().Literal("set").Literal("lifeCount")
-    .Validated("lives", is_valid_integer_positive)
-    .Callback(set_player_life_count)
+    .Validated("lives", is_valid_integer_positive).Tag_gn("int")
+    .Callback(set_player_life_count, ["lives"])
 .Build()
 ```
 ```gdscript
 # mp round length <seconds>
 CommandBuilder.new().Literal("mp").Literal("round").Literal("length")
     .Validated("seconds", is_valid_float_positive, 60.0) # An optional default value may be provided
-    .Callback(set_multiplayer_round_length)
+	.Tag_gn("float").Callback(set_multiplayer_round_length, ["seconds"])
 .Build()
 ```
 ```gdscript
 # teleport <x-position> <y-position> <z-position> 
 CommandBuilder.new().Literal("teleport")
-    .Validated("x-position", is_valid_float, 0) 
-    .Validated("y-position", is_valid_float, 0) 
-    .Validated("z-position", is_valid_float, 0)
-    .Callback(set_player_position)
+    .Validated("x-position", is_valid_float, 0).Tag_gn("float")
+    .Validated("y-position", is_valid_float, 0).Tag_gn("float")
+    .Validated("z-position", is_valid_float, 0).Tag_gn("float")
+    .Callback(set_player_position, ["x-position", "y-position", "z-position"])
 .Build()
 ```
 
@@ -122,6 +125,6 @@ A VariadicArgument is an argument that represents the command accepting any numb
 ```gdscript
 # chat say ...
 CommandBuilder.new()
-    .Literal("chat").Literal("say").Variadic()
+    .Literal("chat").Literal("say").Variadic().Tag("message", "StringName").Callback(send_chat_message, ["message"])
 .Build()
 ```

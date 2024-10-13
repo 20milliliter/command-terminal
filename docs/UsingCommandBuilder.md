@@ -57,7 +57,7 @@ Multiple callbacks can be provided on a single command. Examples include:
 - Multiple commands being registered together for brevity, with a concluding `Branch()` and `Callback()` for each branch.
 - A `Callback()` is registered for command where none of its optional arguments are provided, and a second `Callback()` where they are.
 
-The callback function takes a callback `Callable`, and a tag_array `Array[StringName]`. The callback is the `Callable` that CommandServer will invoke to run the command. The tag_array is the arguments it will provide to that callable, as tag names.
+The callback function takes a callback `Callable`, and a tag_array `Array[StringName]`. The callback is the `Callable` that CommandServer will invoke to run the command. The tag_array is the arguments the server will provide to that callable, in order, as their tag names as defined by `.Tag*()` calls.
 
 ## Optional
 
@@ -80,15 +80,19 @@ A "single command" may be declared multiple times, outlining different sections 
 ```gdscript
 # physics override clear
 CommandServer.register_command(
-	CommandBuilder.new().Literal("physics").Literal("override").Literal("clear").Callback(clear_physics_overrides).Build()
+	CommandBuilder.new().Literal("physics").Literal("override").Literal("clear")
+	# Tagging is unnecessary if the implementation needs no arguments
+	.Callback(clear_physics_overrides).Build()
 )
 # physics override (gravity|friction) <value>
 CommandServer.register_command(
 	CommandBuilder.new().Literal("physics").Literal("override")
 		.Branch()
-			.Literal("gravity").Validated("gravity_value", is_valid_float).Callback(set_global_gravity)
+			.Literal("gravity").Validated("gravity_value", is_valid_float)
+			.Tag_gn("float").Callback(set_global_gravity, ["gravity_value"])
 		.NextBranch()
-			.Literal("friction").Validated("friction_value", is_valid_float).Callback(set_global_friction)
+			.Literal("friction").Validated("friction_value", is_valid_float)
+			.Tag_gn("float").Callback(set_global_friction, ["friction_value"])
 		.EndBranch()
 	.Build()
 )
@@ -96,9 +100,11 @@ CommandServer.register_command(
 CommandServer.register_command(
 	CommandBuilder.new().Literal("physics").Literal("override").Literal("player")
 		.Branch()
-			.Literal("gravity").Validated("gravity_value", is_valid_float).Callback(set_player_gravity)
+			.Literal("gravity").Validated("gravity_value", is_valid_float)
+			.Tag_gn("float").Callback(set_player_gravity, ["gravity_value"])
 		.NextBranch()
-			.Literal("friction").Validated("friction_value", is_valid_float).Callback(set_player_friction)
+			.Literal("friction").Validated("friction_value", is_valid_float)
+			.Tag_gn("float").Callback(set_player_friction, ["friction_value"])
 		.EndBranch()
 	.Build()
 )

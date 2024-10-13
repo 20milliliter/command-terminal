@@ -23,7 +23,9 @@ More information on using the `CommandBuilder` can be found in [Using CommandBui
 
 ### func register_parser(type : StringName, parser : Callable) -> void
 
-This method registers a new parser with the CommandServer. Without parsers, CommandServer can only call method with `String` arguments (thus helper methods for every command would have to exist). It takes a StringName of the type to parse and the callable to call. The provided callable should take only one argument, a String, and return type specified by `type`. 
+This method registers a new parser with the CommandServer. Without parsers, CommandServer can only call provided methods with `String` arguments (thus helper methods for every command would have to exist).
+
+It takes a StringName of the type to parse and the callable to call. The provided callable should take only one argument, a String, and return a type `type`. 
 
 Here is an example of a simple float parser:
 ```gdscript
