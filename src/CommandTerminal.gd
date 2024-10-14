@@ -20,11 +20,17 @@ extends Control
 
 @onready var guts : Node = self.get_node("__guts__")
 
+func _ready():
+	_first_time_setup()
+	_handle_editor_properties()
+
 func _process(_delta : float) -> void:
+	if not Engine.is_editor_hint(): return
 	_first_time_setup()
 	_handle_editor_properties()
 
 func _first_time_setup() -> void:
+	if guts != null: return
 	if self.has_node("__guts__"): 
 		guts = self.get_node("__guts__")
 		return
