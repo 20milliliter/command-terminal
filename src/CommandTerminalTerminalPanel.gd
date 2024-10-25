@@ -29,6 +29,9 @@ func _ready() -> void:
 	terminal_line_edit.focus_entered.connect(autofill_panel.redraw_autofill_contents)
 	terminal_line_edit.focus_exited.connect(autofill_panel.redraw_autofill_contents)
 
+	terminal_line_edit.clear()
+	terminal_rich_label.clear()
+
 func _paint_terminal_text(text : String) -> String:
 	var tokentree : CommandTokenizer.TokenTreeNode = command_terminal_guts.tokenizer_cache(text)
 	if tokentree == null: return text

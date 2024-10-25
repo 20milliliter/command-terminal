@@ -8,6 +8,7 @@ extends PanelContainer
 var existing_char_count : int = 0
 func _ready() -> void:
 	terminal_panel.contents_altered.connect(refresh_autofill_contents)
+	self.hide()
 
 func refresh_autofill_contents(new_text : String) -> void:
 	CommandTerminalLogger.log(3, ["AUTOFILL"], "Getting autofill options for '%s'..." % [new_text])

@@ -18,16 +18,17 @@ extends Control
 ## The [StyleBox]es to use for the autofill panel.
 @export var autofill_panel_styling : StyleBox
 
-@onready var guts : Node = self.get_node("__guts__")
+var guts : Node
 
 func _ready():
 	_first_time_setup()
-	_handle_editor_properties()
+	_handle_editor_functions()
 
 func _process(_delta : float) -> void:
-	if not Engine.is_editor_hint(): return
-	_first_time_setup()
 	_handle_editor_properties()
+	_handle_functions()
+	if not Engine.is_editor_hint(): return
+	_handle_editor_functions()
 
 func _first_time_setup() -> void:
 	if guts != null: return
@@ -40,8 +41,24 @@ func _first_time_setup() -> void:
 	self.add_child(guts)
 	guts.set_owner(get_tree().get_edited_scene_root())
 
-	guts.call_deferred("set_anchors_and_offsets_preset", PRESET_FULL_RECT)
-	self.call_deferred("set_anchors_and_offsets_preset", PRESET_BOTTOM_WIDE)
+	guts.set_anchors_and_offsets_preset.call_deferred(PRESET_FULL_RECT)
+	self.set_anchors_and_offsets_preset.call_deferred(PRESET_BOTTOM_WIDE)
+
+func _handle_functions() -> void:
+	var terminal_line_edit = guts.find_child("TERMINAL-LINE-EDIT", true, false)
+	var terminal_rich_label = guts.find_child("TERMINAL-RICH-LABEL", true, false)
+	terminal_line_edit.set_anchors_and_offsets_preset(PRESET_HCENTER_WIDE)
+	terminal_rich_label.set_anchors_and_offsets_preset(PRESET_HCENTER_WIDE)
+
+func _handle_editor_functions() -> void:
+	if self.size.y < 15:
+		self.position.y -= 15 - self.size.y
+		self.size.y = 15
+	var autofill_panel = guts.find_child("AUTOFILL-PANEL", true, false)
+	var terminal_panel = guts.find_child("TERMINAL-PANEL", true, false)
+	var terminal_panel_rect = terminal_panel.get_rect()
+	autofill_panel.size = Vector2(0, terminal_panel_rect.size.y)
+	autofill_panel.position = -Vector2(0, terminal_panel_rect.size.y)
 
 func _handle_editor_properties() -> void:
 	if autofill_panel_styling:
