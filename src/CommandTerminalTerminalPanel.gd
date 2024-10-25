@@ -69,11 +69,13 @@ func autofill_text(argument : String) -> void:
 	terminal_line_edit.caret_column = autofilled.length()
 	
 func _input(event : InputEvent) -> void:
-	#if not terminal_line_edit.has_focus(): return
+	if not terminal_line_edit.has_focus(): return
 	if event.is_action_pressed("ui_focus_prev"):
 		autofill_panel.advance_autofill_index()
+		self.get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("ui_focus_next"):
 		autofill_panel.reverse_autofill_index()
+		self.get_viewport().set_input_as_handled()
 
 func _process(_delta : float) -> void:
 	if Input.is_action_just_pressed("ui_console"):
