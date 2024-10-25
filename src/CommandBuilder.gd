@@ -106,12 +106,14 @@ func Tag_gn(type : StringName, parser : Callable = Callable()) -> CommandBuilder
 	return self
 
 ## Tags the previous argument, assuming the type to be "StringName".
-func Tag_st(name : StringName, parser : Callable = Callable()) -> CommandBuilder:
+func Tag_st(name : StringName, parser : Callable = pass_through) -> CommandBuilder:
 	return Tag(name, "StringName", parser)
 
 ## Tags the previous argument, assuming the tag name as the argument's "given name", and assuming the type to be "StringName".
-func Tag_gnst(parser : Callable = Callable()) -> CommandBuilder:
+func Tag_gnst(parser : Callable = pass_through) -> CommandBuilder:
 	return Tag_gn("StringName", parser)
+
+func pass_through(v : Variant) -> Variant: return v
 
 ## Adds a callback to the command at the current position.[br]
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
