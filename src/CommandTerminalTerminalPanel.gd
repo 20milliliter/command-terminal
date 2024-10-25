@@ -9,6 +9,7 @@ extends PanelContainer
 
 signal contents_altered(new_contents : String)
 signal command_ran(command : String)
+var last_ran_command : String = ""
 
 func _ready() -> void:
 	terminal_line_edit.text_changed.connect(
@@ -23,6 +24,7 @@ func _ready() -> void:
 			terminal_line_edit.text = ""
 			terminal_rich_label.text = ""
 			CommandTerminalLogger.log(2, ["TERMINAL"], "Terminal submitted with: '%s'." % [t]) 
+			last_ran_command = t
 			command_ran.emit(t)
 			terminal_line_edit.text_changed.emit("")
 	)
@@ -79,6 +81,12 @@ func _input(event : InputEvent) -> void:
 	elif event.is_action_pressed("ui_focus_next"):
 		autofill_panel.reverse_autofill_index()
 		self.get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("ui_up"):
+		terminal_line_edit.clear()
+		terminal_line_edit.insert_text_at_caret(last_ran_command)
+		terminal_line_edit.text_changed.emit(last_ran_command)
+		self.get_viewport().set_input_as_handled()
+
 
 func _process(_delta : float) -> void:
 	if Input.is_action_just_pressed("ui_console"):
