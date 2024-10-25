@@ -49,7 +49,7 @@ theme_override_constants/margin_bottom = 2
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "1234567891011121314151617181920212223242526272829"
+text = "autofill"
 fit_content = true
 autowrap_mode = 0
 
@@ -87,7 +87,7 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 bbcode_enabled = true
-text = "1234567891011121314151617181920212223242526272829"
+text = "terminal"
 fit_content = true
 
 [node name="TERMINAL-LINE-EDIT" type="LineEdit" parent="TerminalControl/TERMINAL-PANEL/MarginContainer/Control"]
