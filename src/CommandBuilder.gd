@@ -118,10 +118,10 @@ func pass_through(v : Variant) -> Variant: return v
 ## Adds a callback to the command at the current position.[br]
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
 ## Multiple callbacks can be added to a single command at different positions if desired.
-func Callback(_callback : Callable, _tag_array : Array[StringName] = []) -> CommandBuilder:
+func Callback(_callback : Callable, _arguments : Array[StringName] = []) -> CommandBuilder:
 	for node : ArgumentNode in upcoming_parents:
 		node.callback = _callback
-		node.callback_tag_names = _tag_array
+		node.callback_arguments = _arguments
 	return self
 
 ## Signals that every following argument is optional.

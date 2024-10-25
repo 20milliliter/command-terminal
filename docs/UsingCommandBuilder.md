@@ -57,7 +57,12 @@ Multiple callbacks can be provided on a single command. Examples include:
 - Multiple commands being registered together for brevity, with a concluding `Branch()` and `Callback()` for each branch.
 - A `Callback()` is registered for command where none of its optional arguments are provided, and a second `Callback()` where they are.
 
-The callback function takes a callback `Callable`, and a tag_array `Array[StringName]`. The callback is the `Callable` that CommandServer will invoke to run the command. The tag_array is the arguments the server will provide to that callable, in order, as their tag names as defined by `.Tag*()` calls.
+The callback function takes a callback `Callable`, and an arguments `Array[Variant]`. The callback is the `Callable` that CommandServer will invoke to run the command. The arguments are the arguments the server will provide to that callable, in order. If an argument matches a name from a previous `.Tag*()` call, the content of the tagged argument is substituted.
+
+> _**Note**: `Callable.bind()` sucks, actually._
+> <br/> _`Callable.bind()` works in an unintuitive way.
+> <br/> Unless you are familiar with `bind()`, `bind()`ing a Callable passed into `Callback()` will probably not do what you expect. If you wish to provide extra arguments to a command's implementing Callable, include their literals in the argument array.
+> <br/> Binding anything besides a `Callback()` callable should be fine._
 
 ## Optional
 

@@ -3,7 +3,7 @@ extends RefCounted
 
 var argument : Argument
 var callback : Callable
-var callback_tag_names : Array[StringName]
+var callback_arguments : Array
 
 var parents :  Array[ArgumentNode]
 var children : Array[ArgumentNode]

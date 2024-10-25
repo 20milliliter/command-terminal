@@ -49,11 +49,11 @@ func run_command(command : String) -> void:
 	CommandTerminalLogger.log(3, ["COMMAND"], "Handling callback arguments.")
 	var callback : Callable = most_recent_callback_holder.callback
 	var callback_arguments : Array[Variant] = []
-	if most_recent_callback_holder.callback_tag_names.size() > 0:
+	if most_recent_callback_holder.callback_arguments.size() > 0:
 		CommandTerminalLogger.log(3, ["COMMAND"], "Parsing callback arguments...")
-		for tag_name : StringName in most_recent_callback_holder.callback_tag_names:
-			if tag_map.has(tag_name):
-				var tag_token : CommandTokenizer.Token = tag_map[tag_name]
+		for argument : Variant in most_recent_callback_holder.callback_arguments:
+			if tag_map.has(argument):
+				var tag_token : CommandTokenizer.Token = tag_map[argument]
 				var tag : ArgumentTag = tag_token.node.argument.tag
 				if tag.type == "String":
 					callback_arguments.append(tag_token.content)
@@ -78,8 +78,8 @@ func run_command(command : String) -> void:
 					var parsed_value : Variant = parser.call(tag_token.content)
 					callback_arguments.append(parsed_value)
 			else:
-				CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Callback requested tag which does not exist. Null provided.")
-				callback_arguments.append(null)
+				CommandTerminalLogger.log(3, ["COMMAND"], "Callback argument '%s' not in tag map. Supplying argument itself." % [argument])
+				callback_arguments.append(argument)
 	else:
 		CommandTerminalLogger.log(3, ["COMMAND"], "No callback arguments requested.")
 	
