@@ -23,16 +23,19 @@ func add(node : ArgumentNode) -> void:
 
 ## Adds a [LiteralArgument] to the command.
 func Literal(_literal : StringName) -> CommandBuilder:
+	# TODO: These method args shouldn't be _-prefixed
 	self.add(ArgumentNode.new(LiteralArgument.new(_literal, optional)))
 	return self
 
 ## Adds a [KeyArgument] to the command.
 func Key(_name : String, _autofill_provider : Callable) -> CommandBuilder:
+	# TODO: Rename to _keys_provider
 	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _autofill_provider)))
 	return self
 
 ## Adds a [ValidatedArgument] to the command.
 func Validated(_key : StringName, _validator : Callable = Callable(), _default : Variant = "") -> CommandBuilder:
+	# TODO: _validator shouldn't be optional
 	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator, _default)))
 	return self
 
@@ -119,6 +122,7 @@ func pass_through(v : Variant) -> Variant: return v
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
 ## Multiple callbacks can be added to a single command at different positions if desired.
 func Callback(_callback : Callable, _arguments : Array[StringName] = []) -> CommandBuilder:
+	# TODO: _arguments should be Array[Variant]
 	for node : ArgumentNode in upcoming_parents:
 		node.callback = _callback
 		node.callback_arguments = _arguments

@@ -1,19 +1,19 @@
 # Using `CommandBuilder`
 The `CommandBuilder` is an included builder for creating `ArgumentGraph`s, which are how the addon internally represents commands.
 
-<!---
-TODO: Rework formatting of this to be more consistent. really all of it needs reformatting
--->
+> [!NOTE]
+> The naming here is very intentional. 
+> While always linear, command structures are not trees, but graphs, due to certain behaviors of branching.
+> More on that in that section.
 
-> _**Note**: The naming here is very intentional. While always linear, command structures are not trees, but graphs, due to certain behaviors of branching._
-> <br/>_More on that in that section._
+> [!WARNING]
+> It is very possible to build an invalid/contradictory/unparseable command with the builder.
+> A feature to warn the user when this is occuring is planned for the future.
+>
+> However, from my testing/analysis, encountering this pretty much requires a badly declared command.
+> If you run into lexing issues, it may be a sign you need to reorganize your command declaration. Feel free to ask me to be sure.
 
-> _**Note**: It is very possible to build an invalid/contradictory/unparseable command with the builder._
-> <br/>_A feature to warn the user when this is occuring is planned but not yet implemented._
-> <br/>_However, from my testing/analysis, encountering this pretty much requires an obtusely declared command._
-> <br/>_If you run into lexing issues, it may be a sign you need to reorganize your command declaration. Feel free to ask me to be sure._
-
-All of `CommandBuilder`'s methods are a part of one of three groups:
+All of `CommandBuilder`'s methods are in one of three groups:
 
 1. Arguments
 2. Branching
@@ -21,97 +21,83 @@ All of `CommandBuilder`'s methods are a part of one of three groups:
 
 ## Arguments
 
-For arguments, a method exists for each argument type which adds a new argument of that type to the command.
-All argument types with examples are viewable on the [Arguments](https://github.com/20milliliter/command-terminal/wiki/Arguments) page.
+For arguments, a method exists for each argument type which adds a new argument of that type to the command. Methods include:
 
-Branching and meta methods will be described here.
+- `Literal()`
+- `Key()`
+- `Validated()`
+- `Variatic()`
+
+Information about argument types, with examples, can be found [here](Arguments.md).
 
 ## Branching
 
 Branching methods permit encoding branching command paths into commands.
 
-- Use `Branch()` to begin a branch. Subsequent commands append to the current branch.
-- Use `NextBranch()` to finish adding to the current branch, and start the next.
-- Use `EndBranch()` to finish the current branch, and continue.
+- `Branch()` begins a branch. Subsequent arguments append to only the current branch.
+- `NextBranch()` finishes the current branch, and begins a new branch.
+- `EndBranch()` finishes the current branch. Subsequent arguments append to all branches.
 
-Adding arguments after a Branch is supported. This is useful for commands which have an "option" in the middle that may change a portion of the command signature, but leave the rest the same.
+>[!TIP]
+> Adding arguments after a Branch is supported. This is useful for commands which have an "option" in the middle that adds an argument or two, but leaves the rest the same.
 
-Nesting Branches is supported, but not recommended. If a command with such complexity is required, [register it in chunks](https://github.com/20milliliter/command-terminal/wiki/Using-CommandBuilder#commands-in-chunks) instead.
+>[!WARNING]
+> Nesting Branches is supported, but generally not recommended.
+> If a command with such complexity is required, consider [registering it in chunks](BestPractices.md#commands-in-chunks) instead.
 
-## Tag
+## Meta
 
-`Tag()` provides the previous argument with a tag. Tagged arguments are arguments which are relevant to a commands implementation, and will need to be parsed when the command is executed.
+### Tag
 
-`Tag()` takes three arguments. First, the `name : StringName` of the tag, then the `type : StringName` of the tagged argument. Finally, the `parser : Callable` to use to parse.
+`Tag()` provides the previous `Argument` with a tag. Tagged `Argument`s are arguments which are relevant to a commands implementation, and will need to be parsed when the command is executed.
 
-`parser` is an optional argument, as if none is provided, `CommandServer` will search it's registered "global parsers" to find a parser for type `type`.
+The method takes three arguments. First, the `name : StringName` of the tag, then the `type : StringName` of the tagged argument, and the `parser : Callable` to use to parse it.
 
-`Tag_gn()` (given name) is a helper that assumes the tag name based on the argument.
-`Tag_gnst()` (given name, stringname type) is a helper that assumes the tag name based on the argument, and assumes the type to be StringName. 
+The `parser` is an optional argument. If none is provided, `CommandServer` will search it's registered "global parsers" to find a parser for type `type`.
 
-## Callback
+More information about parsers can be found [here](UsingCommandServer.md#register-Parser).
 
-`Callback()` registers the previous argument as a point where the command is considered "complete", signified by the `Callable` to invoke in response to this command being entered. When executing a command, the `CommandServer` will search the command's `ArgumentGraph` for the most recent fulfilled argument with a provided `Callback()`, and invoke it.
+`CommandBuilder` also provides three helper methods for more terse tagging:
 
-Multiple callbacks can be provided on a single command. Examples include:
-- Multiple commands being registered together for brevity, with a concluding `Branch()` and `Callback()` for each branch.
-- A `Callback()` is registered for command where none of its optional arguments are provided, and a second `Callback()` where they are.
+- `Tag_gn()` (given name) populates the tag name based on the argument.
+- `Tag_st()` (stringname type) populates the type as `&"StringName"`.
+- `Tag_gnst()` (given name, stringname type) populates the tag name based on the argument, and populates the type as `&"StringName"`.
 
-The callback function takes a callback `Callable`, and an arguments `Array[Variant]`. The callback is the `Callable` that CommandServer will invoke to run the command. The arguments are the arguments the server will provide to that callable, in order. If an argument matches a name from a previous `.Tag*()` call, the content of the tagged argument is substituted.
+> [!NOTE]
+> Given names are retrieved as follows:
+>
+> - `Literal` - the provided literal
+> - `Key` - the provided name
+> - `Validated` - the provided name
+> - `Variadic` - `&"..."`
 
-> _**Note**: `Callable.bind()` sucks, actually._
-> <br/> _`Callable.bind()` works in an unintuitive way.
-> <br/> Unless you are familiar with `bind()`, `bind()`ing a Callable passed into `Callback()` will probably not do what you expect. If you wish to provide extra arguments to a command's implementing Callable, include their literals in the argument array.
-> <br/> Binding anything besides a `Callback()` callable should be fine._
+### Callback
 
-## Optional
+`Callback()` registers the previous argument as a point where the command is considered "complete", via a `Callable` to invoke when the command is entered.
+
+> [!NOTE]
+> Multiple callbacks can be provided on a single command. When executing a command, the `Callback()` that is invoked is the the deepest which can be validly reached.
+>
+> Examples include:
+>
+> - Multiple simple commands being built together for brevity, with a concluding `Branch()` and `Callback()` for each branch.
+> - A `Callback()` is registered for command where none of its optional arguments are provided, and a second `Callback()` where they are.
+
+The function takes a `_callback : Callable` that `CommandServer` will invoke to run the command, and `_arguments : Array[StringName]` that the server will provide to that callable, in order, when invoked. If a `StringName` argument matches the name of a `.Tag*()`ed argument, the content of the tagged argument is parsed and substituted.
+
+> [!WARNING]
+> `Callable.bind()` sucks, actually. (It works in an unintuitive way.)
+> <br/> Unless you are familiar with `bind()` and `unbind()`, `bind()`ing a `Callable` passed into `Callback()` will probably not do what you expect. If you wish to provide extra arguments to a command's implementing `Callable`, include their symbol literals in the arguments array.
+
+### Optional
 
 `Optional()` signals that all of the arguments after it are optional to the command. This is mostly just to satisfy the lexer.
-> _**Note:** If not using separate `Callback()`s, the singular one must be at or before the `Optional()` call, and must be capable of handling none/any of the optional arguments being provided._
 
-## Commands in Chunks
+<!---
 
-Lastly, a slight recommendation on how to register commands.
+TODO: Pretty confident below is straight cap. Optional() needs testing like at all 
 
-**The `CommandServer` retains a singular, traversable graph of registered commands.**
-<br/>**`CommandServer.register_command()` is not an append, it is a merge.**
+> [!NOTE]
+> If not using separate `Callback()`s, the singular one must be at or before the `Optional()` call, and must be capable of handling none/any of the optional arguments being provided.
 
-Every multiplayer command (`mp ...`) need not be declared with a single builder and eighty branches.
-
-**Instead, declare every command with a *meaningfully different use*, separately.**
-
-A "single command" may be declared multiple times, outlining different sections of deeper arguments in a clearer form.
-
-```gdscript
-# physics override clear
-CommandServer.register_command(
-	CommandBuilder.new().Literal("physics").Literal("override").Literal("clear")
-	# Tagging is unnecessary if the implementation needs no arguments
-	.Callback(clear_physics_overrides).Build()
-)
-# physics override (gravity|friction) <value>
-CommandServer.register_command(
-	CommandBuilder.new().Literal("physics").Literal("override")
-		.Branch()
-			.Literal("gravity").Validated("gravity_value", is_valid_float)
-			.Tag_gn("float").Callback(set_global_gravity, ["gravity_value"])
-		.NextBranch()
-			.Literal("friction").Validated("friction_value", is_valid_float)
-			.Tag_gn("float").Callback(set_global_friction, ["friction_value"])
-		.EndBranch()
-	.Build()
-)
-# physics override player (gravity|friction) <value>
-CommandServer.register_command(
-	CommandBuilder.new().Literal("physics").Literal("override").Literal("player")
-		.Branch()
-			.Literal("gravity").Validated("gravity_value", is_valid_float)
-			.Tag_gn("float").Callback(set_player_gravity, ["gravity_value"])
-		.NextBranch()
-			.Literal("friction").Validated("friction_value", is_valid_float)
-			.Tag_gn("float").Callback(set_player_friction, ["friction_value"])
-		.EndBranch()
-	.Build()
-)
-```
-
+-->

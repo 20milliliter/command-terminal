@@ -1,14 +1,24 @@
 # Getting Started
-To use `command-terminal`, follow these steps:
 
-0. Install and enable the addon
-1. Verify plugin settings 
-2. Create a function which implements a command
-3. Register that command with the `CommandServer`
-4. Create a `CommandTerminal` control node in your scene, or call `CommandServer.run_command()` directly
+## Installation
 
-## Learn more
-To get more information, refer to the other guides listed on the right and below:
-- [Using CommandServer](UsingCommandServer.md)
-- [Arguments](Arguments.md)
-- [Using CommandBuilder](UsingCommandBuilder.md)
+You can install the addon as a git submodule:
+`git submodule add https://github.com/20milliliter/command-terminal.git ./addons/command-terminal`
+
+Alternatively, you can install it manually by downloading the zip.
+
+## Recomended Reading
+
+The following is an in-order list of readings reccomended for learning how to use the addon.
+
+1. [Using CommandServer](UsingCommandServer.md)
+2. [Using CommandBuilder](UsingCommandBuilder.md)
+3. [Arguments](Arguments.md)
+4. [Best Practices](BestPractices.md)
+
+## Supplimentary Reading
+
+The following is a list with additional, but non-essential information.
+
+- [Step-by-Step](StepByStep.md)
+- [Plugin Settings](PluginSettings.md)
