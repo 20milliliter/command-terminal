@@ -17,6 +17,8 @@ static func _tokenize(
 	if _working_node is ArgumentGraph:
 		# Working node is root, skip to children
 		var dummynode : LexTreeNode = LexTreeNode.new(RootToken.new())
+		if _working_node.children.size() == 0:
+			dummynode.children.push_back(LexTreeNode.new(LeftoverToken.new(_input)))
 		for child : ArgumentNode in _working_node.children:
 			var child_node : LexTreeNode = _tokenize(_input, child)
 			if (not child_node.token is LeftoverToken) or dummynode.children.size() == 0:
