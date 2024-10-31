@@ -22,21 +22,18 @@ func add(node : ArgumentNode) -> void:
 	upcoming_parents = [node]
 
 ## Adds a [LiteralArgument] to the command.
-func Literal(_literal : StringName) -> CommandBuilder:
-	# TODO: These method args shouldn't be _-prefixed
-	self.add(ArgumentNode.new(LiteralArgument.new(_literal, optional)))
+func Literal(literal : StringName) -> CommandBuilder:
+	self.add(ArgumentNode.new(LiteralArgument.new(literal, optional)))
 	return self
 
 ## Adds a [KeyArgument] to the command.
-func Key(_name : String, _autofill_provider : Callable) -> CommandBuilder:
-	# TODO: Rename to _keys_provider
-	self.add(ArgumentNode.new(KeyArgument.new(_name, optional, _autofill_provider)))
+func Key(name : String, keys_provider : Callable) -> CommandBuilder:
+	self.add(ArgumentNode.new(KeyArgument.new(name, keys_provider, optional)))
 	return self
 
 ## Adds a [ValidatedArgument] to the command.
-func Validated(_key : StringName, _validator : Callable = Callable(), _default : Variant = "") -> CommandBuilder:
-	# TODO: _validator shouldn't be optional
-	self.add(ArgumentNode.new(ValidatedArgument.new(_key, optional, _validator, _default)))
+func Validated(key : StringName, validator : Callable, default : Variant = "") -> CommandBuilder:
+	self.add(ArgumentNode.new(ValidatedArgument.new(key, validator, optional, default)))
 	return self
 
 ## Adds a [VariadicArgument] to the command.
@@ -121,11 +118,10 @@ func pass_through(v : Variant) -> Variant: return v
 ## Adds a callback to the command at the current position.[br]
 ## The callback is called when a command matching the structure it's a part of is submitted.[br]
 ## Multiple callbacks can be added to a single command at different positions if desired.
-func Callback(_callback : Callable, _arguments : Array[StringName] = []) -> CommandBuilder:
-	# TODO: _arguments should be Array[Variant]
+func Callback(callback : Callable, arguments : Array[Variant] = []) -> CommandBuilder:
 	for node : ArgumentNode in upcoming_parents:
-		node.callback = _callback
-		node.callback_arguments = _arguments
+		node.callback = callback
+		node.callback_arguments = arguments
 	return self
 
 ## Signals that every following argument is optional.

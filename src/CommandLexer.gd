@@ -1,9 +1,9 @@
-class_name CommandTokenizer
+class_name CommandLexer
 extends RefCounted
 
-static func tokenize_input(input : String) -> TokenTreeNode:
+static func tokenize_input(input : String) -> LexTreeNode:
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Preparing to tokenize.")
-	var output : TokenTreeNode = _tokenize(input)
+	var output : LexTreeNode = _tokenize(input)
 	_clean_leftovers(output)
 	CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Returning tokenization: \n" + _print_tree(output))
 	return output
@@ -12,13 +12,13 @@ static func _tokenize(
 		_input : String, 
 		_working_node : ArgumentNode = CommandServer.argument_graph,
 		_colored_arg_count : int = 0
-	) -> TokenTreeNode:
+	) -> LexTreeNode:
 	
 	if _working_node is ArgumentGraph:
 		# Working node is root, skip to children
-		var dummynode : TokenTreeNode = TokenTreeNode.new(RootToken.new())
+		var dummynode : LexTreeNode = LexTreeNode.new(RootToken.new())
 		for child : ArgumentNode in _working_node.children:
-			var child_node : TokenTreeNode = _tokenize(_input, child)
+			var child_node : LexTreeNode = _tokenize(_input, child)
 			if (not child_node.token is LeftoverToken) or dummynode.children.size() == 0:
 				dummynode.children.push_back(child_node)
 			else:
@@ -38,7 +38,7 @@ static func _tokenize(
 		_input
 	)
 
-	var treenode : TokenTreeNode = TokenTreeNode.new(token)
+	var treenode : LexTreeNode = LexTreeNode.new(token)
 	var satisfying_prefix : String = argument.get_satisfying_prefix(_input)
 	var trimmed_input : String = _input
 	
@@ -52,18 +52,18 @@ static func _tokenize(
 
 		if trimmed_input.length() > 0:
 			for child : ArgumentNode in _working_node.children:
-				var child_node : TokenTreeNode = _tokenize(trimmed_input.substr(1), child, _colored_arg_count)
+				var child_node : LexTreeNode = _tokenize(trimmed_input.substr(1), child, _colored_arg_count)
 				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
 					treenode.children.push_back(child_node)
 			if _working_node.children.size() == 0:
-				treenode.children.push_back(TokenTreeNode.new(LeftoverToken.new(trimmed_input.substr(1))))
+				treenode.children.push_back(LexTreeNode.new(LeftoverToken.new(trimmed_input.substr(1))))
 
 	if satisfying_prefix == "" or trimmed_input == "":
-		var autofill_candidates : Array[String] = argument.get_autofill_entries(_input)
-		if autofill_candidates.size() > 0:
-			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Accepted as autofill possibility.")
-			token.provided_autofill_entries = autofill_candidates
-			return TokenTreeNode.new(token)
+		var autocomplete_candidates : Array[String] = argument.get_autocomplete_entries(_input)
+		if autocomplete_candidates.size() > 0:
+			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Accepted as autocomplete possibility.")
+			token.provided_autocomplete_entries = autocomplete_candidates
+			return LexTreeNode.new(token)
 		if trimmed_input != "":
 			CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "Not accepted.")  
 			treenode.token = LeftoverToken.new(_input)
@@ -80,15 +80,15 @@ const _COLORED_ARGS_COLOR_LIST : Array[String] = [
 	"#EDAA13",
 ]
 
-static func _clean_leftovers(node : TokenTreeNode) -> void:
+static func _clean_leftovers(node : LexTreeNode) -> void:
 	if node.children.size() > 1:
-		for child : TokenTreeNode in node.children.duplicate():
+		for child : LexTreeNode in node.children.duplicate():
 			if child.token is LeftoverToken:
 				node.children.erase(child)
-	for child :TokenTreeNode in node.children:
+	for child :LexTreeNode in node.children:
 		_clean_leftovers(child)
 
-static func _print_tree(node : TokenTreeNode, depth : int = 0) -> String:
+static func _print_tree(node : LexTreeNode, depth : int = 0) -> String:
 	var content : String
 	if node == null:
 		return "null"
@@ -97,7 +97,7 @@ static func _print_tree(node : TokenTreeNode, depth : int = 0) -> String:
 	else:
 		content = "root"
 	content = "\t".repeat(depth) + content
-	for child : TokenTreeNode in node.children:
+	for child : LexTreeNode in node.children:
 		if child != null:
 			content += "\n" + _print_tree(child, depth + 1)
 	return content
@@ -125,7 +125,7 @@ class CommandToken extends Token:
 	var name : String
 	var argument : Argument
 	var node : ArgumentNode
-	var provided_autofill_entries : Array[String]
+	var provided_autocomplete_entries : Array[String]
 
 	func _init(
 			_name : String, 
@@ -133,25 +133,25 @@ class CommandToken extends Token:
 			_node : ArgumentNode, 
 			_color : Color, 
 			_content : String, 
-			_provided_autofill_entries : Array[String] = []
+			_provided_autocomplete_entries : Array[String] = []
 		) -> void:
 		name = _name
 		argument = _argument
 		node = _node
 		color = _color
 		content = _content
-		provided_autofill_entries = _provided_autofill_entries
+		provided_autocomplete_entries = _provided_autocomplete_entries
 
 	func _to_string() -> String:
-		return "CommandToken(%s, %s, <%s>, \"%s\", %s)" % [name, argument, get_color_as_hex(), content, provided_autofill_entries]
+		return "CommandToken(%s, %s, <%s>, \"%s\", %s)" % [name, argument, get_color_as_hex(), content, provided_autocomplete_entries]
 
-class TokenTreeNode extends RefCounted:
+class LexTreeNode extends RefCounted:
 	var token : Token
-	var children : Array[TokenTreeNode]
+	var children : Array[LexTreeNode]
 
-	func _init(_token : Token, _children : Array[TokenTreeNode] = []) -> void:
+	func _init(_token : Token, _children : Array[LexTreeNode] = []) -> void:
 		token = _token
 		children = _children
 
 	func _to_string() -> String:
-		return "TokenTreeNode(%s, %s)" % [token, children]
+		return "LexTreeNode(%s, %s)" % [token, children]

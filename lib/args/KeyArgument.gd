@@ -12,7 +12,7 @@ var name : StringName
 ## The Callable that provides the set of possible keys.
 var keys_provider : Callable
 
-func _init(_name : StringName, _optional : bool = false, _keys_provider : Callable = Callable()) -> void:
+func _init(_name : StringName, _keys_provider : Callable, _optional : bool = false) -> void:
 	name = _name
 	keys_provider = _keys_provider
 	super(_optional)
@@ -31,7 +31,7 @@ func _is_equal(argument : Argument) -> bool:
 	if not argument.keys_provider == keys_provider: return false
 	return true
 		
-func get_autofill_entries(_remaining_input : String) -> Array[String]:
+func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	var keys : Array[StringName] = []
 	keys.assign(keys_provider.call())
 	var candidate_keys : Array[String] = []

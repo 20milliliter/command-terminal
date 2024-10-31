@@ -9,13 +9,13 @@ extends PeculiarArgument
 var name : StringName
 ## The [Callable] that determines if a given input is valid.
 var validator : Callable
-## The default value of the argument. If a ValidatedArgument is autofilled, it will use this value. Optional.
+## The default value of the argument. If a ValidatedArgument is autocompleteed, it will use this value. Optional.
 var default_value: String
 
 func _init(
 		_name : StringName, 
+		_validator : Callable, 
 		_optional : bool = false, 
-		_validator : Callable = Callable(), 
 		_default_value : Variant = ""
 	) -> void:
 	name = _name
@@ -37,10 +37,10 @@ func _is_equal(argument : Argument) -> bool:
 	if not validator == argument.validator: return false
 	return true
 
-func get_autofill_content() -> String:
+func get_autocomplete_content() -> String:
 	return default_value
 
-func get_autofill_entries(_remaining_input : String) -> Array[String]:
+func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	if get_satisfying_prefix(_remaining_input) != "" or _remaining_input == "":
 		return [str(self)]
 	return []

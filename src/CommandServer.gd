@@ -24,14 +24,14 @@ func register_parser(type : StringName, parser : Callable) -> void:
 ## The CommandTerminal control node handles running commands by itself, but this may be used if you want to run a command from elsewhere.
 func run_command(command : String) -> void:
 	CommandTerminalLogger.log(1, ["COMMAND"], "Running command '%s'." % [command])
-	var tokentree : CommandTokenizer.TokenTreeNode = CommandTokenizer.tokenize_input(command)
+	var lextree : CommandLexer.LexTreeNode = CommandLexer.tokenize_input(command)
 
 	var most_recent_callback_holder : ArgumentNode = null
-	var tag_map : Dictionary = {} #[StringName, CommandTokenizer.Token] 
-	var working_tokennode : CommandTokenizer.TokenTreeNode = tokentree
-	CommandTerminalLogger.log(3, ["COMMAND"], "Navigating tokentree for callback and tagged args.")
+	var tag_map : Dictionary = {} #[StringName, CommandLexer.Token] 
+	var working_tokennode : CommandLexer.LexTreeNode = lextree
+	CommandTerminalLogger.log(3, ["COMMAND"], "Navigating lextree for callback and tagged args.")
 	while true:
-		if working_tokennode.token is CommandTokenizer.CommandToken: 
+		if working_tokennode.token is CommandLexer.CommandToken: 
 			var arg_node : ArgumentNode = working_tokennode.token.node
 			if not working_tokennode.token.node.callback.is_null():
 				CommandTerminalLogger.log(3, ["COMMAND"], "Found arg '%s' with callback '%s'." % [arg_node.argument, arg_node.callback])
@@ -53,7 +53,7 @@ func run_command(command : String) -> void:
 		CommandTerminalLogger.log(3, ["COMMAND"], "Parsing callback arguments...")
 		for argument : Variant in most_recent_callback_holder.callback_arguments:
 			if tag_map.has(argument):
-				var tag_token : CommandTokenizer.Token = tag_map[argument]
+				var tag_token : CommandLexer.Token = tag_map[argument]
 				var tag : ArgumentTag = tag_token.node.argument.tag
 				if tag.type == "String":
 					callback_arguments.append(tag_token.content)

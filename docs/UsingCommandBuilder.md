@@ -83,7 +83,7 @@ More information about parsers can be found [here](UsingCommandServer.md#registe
 > - Multiple simple commands being built together for brevity, with a concluding `Branch()` and `Callback()` for each branch.
 > - A `Callback()` is registered for command where none of its optional arguments are provided, and a second `Callback()` where they are.
 
-The function takes a `_callback : Callable` that `CommandServer` will invoke to run the command, and `_arguments : Array[StringName]` that the server will provide to that callable, in order, when invoked. If a `StringName` argument matches the name of a `.Tag*()`ed argument, the content of the tagged argument is parsed and substituted.
+The function takes a `callback : Callable` that `CommandServer` will invoke to run the command, and `arguments : Array[Variant]` that the server will provide to that callable, in order, when invoked. If a `StringName` argument matches the name of a `.Tag*()`ed argument, the content of the tagged argument is parsed and substituted.
 
 > [!WARNING]
 > `Callable.bind()` sucks, actually. (It works in an unintuitive way.)

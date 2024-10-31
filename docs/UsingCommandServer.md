@@ -42,17 +42,17 @@ Here is an example of a simple float parser:
 
 ```gdscript
 func parse_float(value : String) -> float:
-    # Validating parser input is technically not required, as 
-    # any value that cannot be parsed should be deemed invalid 
-    # by the argument's validator before it can get here.
-    #
-    # Still probably should to be safe, for instance if 
-    # theres issues with a validator's implementation
+	# Validating parser input is technically not required, as 
+	# any value that cannot be parsed should be deemed invalid 
+	# by the argument's validator before it can get here.
+	#
+	# Still probably should to be safe, for instance if 
+	# theres issues with a validator's implementation
 
-    if value.is_valid_float():
-        return float(value)
-    else:
-        return NAN 
+	if value.is_valid_float():
+		return float(value)
+	else:
+		return NAN 
 ```
 
 And how it would be registered:

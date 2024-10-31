@@ -46,7 +46,7 @@ func register_commands() -> void:
     )
 ```
 
-The following code creates command "player set walk_speed <value>" to alter `WALK_SPEED`. Values inputted that are not positive integers are visibly flagged. Validated arguments supply their default value when autofilled.
+The following code creates command "player set walk_speed <value>" to alter `WALK_SPEED`. Values inputted that are not positive integers are visibly flagged. Validated arguments supply their default value when autocompleteed.
 ```gdscript
 func register_commands() -> void:
     CommandServer.register_command(

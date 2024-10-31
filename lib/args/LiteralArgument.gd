@@ -22,7 +22,7 @@ func _is_equal(argument : Argument) -> bool:
 	if not argument.literal == self.literal: return false
 	return true
 
-func get_autofill_entries(_remaining_input : String) -> Array[String]:
+func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	if literal.begins_with(_remaining_input):
 		return [literal]
 	return []

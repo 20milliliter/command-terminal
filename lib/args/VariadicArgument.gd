@@ -16,10 +16,10 @@ func _is_valid() -> bool:
 func _is_equal(argument : Argument) -> bool:
 	return argument is VariadicArgument
 
-func get_autofill_content() -> String:
+func get_autocomplete_content() -> String:
 	return ""
 
-func get_autofill_entries(_remaining_input : String) -> Array[String]:
+func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	return [str(self)]
 
 func get_satisfying_prefix(_remaining_input : String) -> String:

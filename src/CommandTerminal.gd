@@ -15,8 +15,8 @@ extends Control
 @export_group("Theming")
 ## The [StyleBox]es to use for the terminal panel.
 @export var terminal_panel_styling : StyleBox
-## The [StyleBox]es to use for the autofill panel.
-@export var autofill_panel_styling : StyleBox
+## The [StyleBox]es to use for the autocomplete panel.
+@export var autocomplete_panel_styling : StyleBox
 
 var guts : Node
 
@@ -54,17 +54,17 @@ func _handle_editor_functions() -> void:
 	if self.size.y < 15:
 		self.position.y -= 15 - self.size.y
 		self.size.y = 15
-	var autofill_panel = guts.find_child("AUTOFILL-PANEL", true, false)
+	var autocomplete_panel = guts.find_child("AUTOCOMPLETE-PANEL", true, false)
 	var terminal_panel = guts.find_child("TERMINAL-PANEL", true, false)
 	var terminal_panel_rect = terminal_panel.get_rect()
-	autofill_panel.size = Vector2(0, terminal_panel_rect.size.y)
-	autofill_panel.position = -Vector2(0, terminal_panel_rect.size.y)
+	autocomplete_panel.size = Vector2(0, terminal_panel_rect.size.y)
+	autocomplete_panel.position = -Vector2(0, terminal_panel_rect.size.y)
 
 func _handle_editor_properties() -> void:
-	if autofill_panel_styling:
-		guts.get_node("%AUTOFILL-PANEL").add_theme_stylebox_override("panel", autofill_panel_styling)
+	if autocomplete_panel_styling:
+		guts.get_node("%AUTOCOMPLETE-PANEL").add_theme_stylebox_override("panel", autocomplete_panel_styling)
 	else:
-		guts.get_node("%AUTOFILL-PANEL").remove_theme_stylebox_override("panel")
+		guts.get_node("%AUTOCOMPLETE-PANEL").remove_theme_stylebox_override("panel")
 
 	if terminal_panel_styling:
 		guts.get_node("%TERMINAL-PANEL").add_theme_stylebox_override("panel", terminal_panel_styling)
@@ -74,19 +74,19 @@ func _handle_editor_properties() -> void:
 		guts.get_node("%TERMINAL-PANEL").remove_theme_stylebox_override("panel")
 	
 	if font_size:
-		guts.get_node("%AUTOFILL-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)
+		guts.get_node("%AUTOCOMPLETE-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)
 		guts.get_node("%TERMINAL-RICH-LABEL").add_theme_font_size_override("normal_font_size", font_size)
 		guts.get_node("%TERMINAL-LINE-EDIT").add_theme_font_size_override("font_size", font_size)
 	else:
-		guts.get_node("%AUTOFILL-RICH-LABEL").remove_theme_font_size_override("normal_font_size")
+		guts.get_node("%AUTOCOMPLETE-RICH-LABEL").remove_theme_font_size_override("normal_font_size")
 		guts.get_node("%TERMINAL-RICH-LABEL").remove_theme_font_size_override("normal_font_size")
 		guts.get_node("%TERMINAL-LINE-EDIT").remove_theme_font_size_override("font_size")
 		
 	if font:
-		guts.get_node("%AUTOFILL-RICH-LABEL").add_theme_font_override("normal_font", font)
+		guts.get_node("%AUTOCOMPLETE-RICH-LABEL").add_theme_font_override("normal_font", font)
 		guts.get_node("%TERMINAL-RICH-LABEL").add_theme_font_override("normal_font", font)
 		guts.get_node("%TERMINAL-LINE-EDIT").add_theme_font_override("font", font)
 	else:
-		guts.get_node("%AUTOFILL-RICH-LABEL").remove_theme_font_override("normal_font")
+		guts.get_node("%AUTOCOMPLETE-RICH-LABEL").remove_theme_font_override("normal_font")
 		guts.get_node("%TERMINAL-RICH-LABEL").remove_theme_font_override("normal_font")
 		guts.get_node("%TERMINAL-LINE-EDIT").remove_theme_font_override("font")

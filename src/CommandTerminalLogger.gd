@@ -3,7 +3,7 @@ class_name CommandTerminalLogger
 const TAGS : Dictionary = {
 	"TAG" : "[color=gray][COMMAND-TERMINAL][/color]",
 	"PLUGIN" : "[color=gray][PLUGIN][/color]",
-	"AUTOFILL" : "[color=cyan][AUTOFILL][/color]",
+	"AUTOCOMPLETE" : "[color=cyan][AUTOCOMPLETE][/color]",
 	"TERMINAL" : "[color=green][TERMINAL][/color]",
 	"TOKENIZE" : "[color=orange][TOKENIZE][/color]",
 	"COMMAND" : "[color=red][COMMAND][/color]",

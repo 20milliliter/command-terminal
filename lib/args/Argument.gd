@@ -25,8 +25,8 @@ func _is_equal(_argument : Argument) -> bool: #virtual
 	assert(false, "'_is_equal()' called on Argument that does not implement it.")
 	return false
 
-func get_autofill_entries(_remaining_input : String) -> Array[String]:
-	assert(false, "'get_autofill_entries()' called on Argument that does not implement it.")
+func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
+	assert(false, "'get_autocomplete_entries()' called on Argument that does not implement it.")
 	return []
 
 func get_satisfying_prefix(_remaining_input : String) -> String:

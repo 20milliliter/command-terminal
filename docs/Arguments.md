@@ -42,7 +42,7 @@ CommandBuilder.new()
 
 ## Key
 
-`Key()` adds a `KeyArgument` to the command. A `KeyArgument` is an argument representing a `key : StringName` that can be one of a set of possible keys. The keys are retrieved from `_autofill_provider : Callable`.
+`Key()` adds a `KeyArgument` to the command. A `KeyArgument` is an argument representing a `key : StringName` that can be one of a set of possible keys. The keys are retrieved from `keys_provider : Callable`.
 
 > [!TIP]
 > The set of possible keys need not be fixed, the Callable may provide any set/subset arbitrarily.
@@ -96,11 +96,7 @@ CommandBuilder.new()
 
 ## Validated
 
-`Validated()` adds a `ValidatedArgument` to the command. A `ValidatedArgument` is an argument representing a `key : StringName`, but a `_validator : Callable` that determines if the input is valid. It's primary use-case is for numerical arguments. An optional `_default : Variant` may also be provded, which will be used when autofilling.
-
-<!---
-TODO: Replace reference to "autofill" with "autocomplete"
--->
+`Validated()` adds a `ValidatedArgument` to the command. A `ValidatedArgument` is an argument representing a `key : StringName`, but a `validator : Callable` that determines if the input is valid. It's primary use-case is for numerical arguments. An optional `default : Variant` may also be provded, which will be used when autocompleteing.
 
 ### Examples
 
