@@ -84,7 +84,7 @@ func _input(event : InputEvent) -> void:
 	elif event.is_action_pressed("ui_focus_next"):
 		autocomplete_panel.reverse_autocomplete_index()
 		self.get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("ui_up"):
+	elif event.is_action_pressed("ui_text_caret_up"):
 		terminal_line_edit.clear()
 		terminal_line_edit.insert_text_at_caret(last_ran_command)
 		terminal_line_edit.text_changed.emit(last_ran_command)
