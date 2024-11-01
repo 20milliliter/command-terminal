@@ -3,7 +3,7 @@ class_name CommandTerminalPluginData
 const PLUGIN_ID : String = "command_terminal"
 const PLUGIN_PATH : String = "plugins/" + PLUGIN_ID + "/"
 
-var PROJECT_SETTINGS : Array = [
+var PROJECT_SETTINGS : Array[Dictionary] = [
 	{
 		"name" : PLUGIN_PATH + "console_key_shortcut",
 		"description" : "The InputEvent to be associated with the 'ui_console' input action.",
