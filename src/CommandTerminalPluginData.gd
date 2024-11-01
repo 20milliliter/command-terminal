@@ -14,6 +14,15 @@ var PROJECT_SETTINGS : Array[Dictionary] = [
 		"basic" : true,
 	},
 	{
+		"name" : PLUGIN_PATH + "shortcut_works_cross-window",
+		"description" : "Whether the console shortcut should work even if the Window which owns the CommandTerminal does not have focus.",
+		"type" : TYPE_BOOL,
+		"default" : true,
+		"hint" : PROPERTY_HINT_NONE,
+		"hint_string" : "",
+		"basic" : true,
+	},
+	{
 		"name" : PLUGIN_PATH + "logging_quantity",
 		"description" : "The amount of logging CommandTerminal should provide.",
 		"type" : TYPE_INT,

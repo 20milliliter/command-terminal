@@ -94,5 +94,7 @@ func _input(event : InputEvent) -> void:
 func _process(_delta : float) -> void:
 	if Input.is_action_just_pressed("ui_console"):
 		var window_owner : Window = get_tree().get_root()
-		window_owner.grab_focus() #TODO: project setting conditional
+		var do_grab_focus_crosswindow : bool = ProjectSettings.get_setting(CommandTerminalPluginData.PLUGIN_PATH + "shortcut_works_cross-window")
+		if do_grab_focus_crosswindow:
+			window_owner.grab_focus()
 		terminal_line_edit.grab_focus()

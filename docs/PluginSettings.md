@@ -9,6 +9,11 @@ This page describes all of the plugin's settings.
 This setting defines the key that the addon will listen for at runtime to grab focus into the terminal.
 The default is backtick/backquote/tilde.
 
+### Shortcut Works Crosswindow
+
+This setting sets whether the console shortcut should work even if the Window which owns the CommandTerminal does not have focus.
+In this case, focusing the console will change the currently focused window to the one which owns the console, then give the terminal focus.
+
 ## Logging
 
 ### Logging Quantity
