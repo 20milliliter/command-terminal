@@ -52,40 +52,39 @@ func run_command(command : String) -> void:
 	if most_recent_callback_holder.callback_arguments.size() > 0:
 		CommandTerminalLogger.log(3, ["COMMAND"], "Parsing callback arguments...")
 		for argument : Variant in most_recent_callback_holder.callback_arguments:
-			if tag_map.has(argument):
-				var tag_token : CommandLexer.Token = tag_map[argument]
-				var tag : ArgumentTag = tag_token.node.argument.tag
-				if tag.type == "String":
-					callback_arguments.append(tag_token.content)
-				elif tag.type == "StringName":
-					callback_arguments.append(StringName(tag_token.content))
-				else:
-					var parser : Callable = tag.parser
-
-					if parser.is_null():
-						if parsers.has(tag.type):
-							parser = parsers[tag.type]
-						else:
-							CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Tag '%s' includes no parser, and none is registered to CommandServer. Null provided." % [tag.name])
-							callback_arguments.append(null)
-							continue
-
-					if parser.get_argument_count() != 1:
-						CommandTerminalLogger.log(3, ["COMMAND"], "ERROR: Parser for tag '%s' of type '%s' is invalid, accepting %s arguments when 1 is expected. Null provided." % [tag.name, tag.type, parser.get_argument_count()])
-						callback_arguments.append(null)
-						continue
-
-					var parsed_value : Variant = parser.call(tag_token.content)
-					callback_arguments.append(parsed_value)
-			else:
-				CommandTerminalLogger.log(3, ["COMMAND"], "Callback argument '%s' not in tag map. Supplying argument itself." % [argument])
-				callback_arguments.append(argument)
+			callback_arguments.append(_parse_argument_against_tagmap(argument, tag_map))
 	else:
 		CommandTerminalLogger.log(3, ["COMMAND"], "No callback arguments requested.")
 
 	CommandTerminalLogger.log(3, ["COMMAND"], "Calling Callback %s with args %s..." % [callback, callback_arguments])
 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
 	callback.callv(callback_arguments)
+
+func _parse_argument_against_tagmap(argument : Variant, tag_map : Dictionary) -> Variant:
+	CommandTerminalLogger.log(3, ["COMMAND", "PARSE"], "Parsing argument '%s'." % [argument])
+	if tag_map.has(argument):
+		var tag_token : CommandLexer.Token = tag_map[argument]
+		var tag : ArgumentTag = tag_token.node.argument.tag
+		if tag.type == "String":
+			return tag_token.content
+		elif tag.type == "StringName":
+			return StringName(tag_token.content)
+		else:
+			var parser : Callable = tag.parser
+			if parser.is_null():
+				if parsers.has(tag.type):
+					parser = parsers[tag.type]
+				else:
+					CommandTerminalLogger.log(3, ["COMMAND", "PARSE"], "ERROR: Tag '%s' includes no parser, and none is registered to CommandServer. Null provided." % [tag.name])
+					return null
+			if parser.get_argument_count() != 1:
+				CommandTerminalLogger.log(3, ["COMMAND", "PARSE"], "ERROR: Parser for tag '%s' of type '%s' is invalid, accepting %s arguments when 1 is expected. Null provided." % [tag.name, tag.type, parser.get_argument_count()])
+				return null
+			var parsed_value : Variant = parser.call(tag_token.content)
+			return parsed_value
+	else:
+		CommandTerminalLogger.log(3, ["COMMAND", "PARSE"], "Callback argument '%s' not in tag map. Supplying argument itself." % [argument])
+		return argument
 
 var current_command : String = ""
 #var relevant_arg : String = ""

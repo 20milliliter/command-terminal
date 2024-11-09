@@ -3,12 +3,13 @@ class_name CommandTerminalLogger
 const TAGS : Dictionary = {
 	"TAG" : "[color=gray][COMMAND-TERMINAL][/color]",
 	"PLUGIN" : "[color=gray][PLUGIN][/color]",
-	"AUTOCOMPLETE" : "[color=cyan][AUTOCOMPLETE][/color]",
-	"TERMINAL" : "[color=green][TERMINAL][/color]",
-	"TOKENIZE" : "[color=orange][TOKENIZE][/color]",
 	"COMMAND" : "[color=red][COMMAND][/color]",
-	"PAINTING" : "[color=purple][PAINTING][/color]",
+	"TOKENIZE" : "[color=orange][TOKENIZE][/color]",
+	"PARSE" : "[color=yellow][PARSE][/color]",
 	"BUILDER" : "[color=blue][BUILDER][/color]",
+	"TERMINAL" : "[color=green][TERMINAL][/color]",
+	"AUTOCOMPLETE" : "[color=cyan][AUTOCOMPLETE][/color]",
+	"PAINTING" : "[color=purple][PAINTING][/color]",
 }
 
 static func log(message_level : int, tags : Array[String], message : String) -> void:
