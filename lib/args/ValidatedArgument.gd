@@ -41,13 +41,13 @@ func get_autocomplete_content() -> String:
 	return default_value
 
 func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
-	if get_satisfying_prefix(_remaining_input) != "" or _remaining_input == "":
+	if get_satisfying_prefix(_remaining_input).content != "" or _remaining_input == "":
 		return [str(self)]
 	return []
 
-func get_satisfying_prefix(_remaining_input : String) -> String:
+func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	var next : String = _remaining_input.get_slice(" ", 0)
 	var next_is_valid : bool = validator.call(next)
 	if next_is_valid:
-		return next
-	return ""
+		return CommandLexer.LexPrefix.new(true, next)
+	return CommandLexer.LexPrefix.new(false)

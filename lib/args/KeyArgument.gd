@@ -40,10 +40,10 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 			candidate_keys.append(key)
 	return candidate_keys
 
-func get_satisfying_prefix(_remaining_input : String) -> String:
+func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	var keys : Array[StringName] = []
 	keys.assign(keys_provider.call())
 	for key : StringName in keys:
 		if _remaining_input.begins_with(key + " "):
-			return key
-	return ""
+			return CommandLexer.LexPrefix.new(true, key)
+	return CommandLexer.LexPrefix.new(false)
