@@ -55,7 +55,9 @@ static func _tokenize(
 		token.content = prefix_content
 
 		if _working_node.argument.tag != null:
-			_tag_map[_working_node.argument.tag.name] = token
+			var tag_name : StringName = _working_node.argument.tag.name
+			CommandTerminalLogger.log(3, ["COMMAND","TAG"], "Tag '%s' recorded." % [tag_name])
+			_tag_map[tag_name] = token
 
 		if _working_node.argument is ValidatedArgument or _working_node.argument is KeyArgument:
 			_colored_arg_count += 1

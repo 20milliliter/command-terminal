@@ -37,7 +37,7 @@ func Validated(key : StringName, validator : Callable, default : Variant = "") -
 	return self
 
 ## Adds a [ConditionArgument] to the command.
-func Condition(evaluator : Callable) -> CommandBuilder:
+func Condition(evaluator : Callable, arguments : Array[Variant] = []) -> CommandBuilder:
 	var condition : ConditionArgument.Evaluatable = ConditionArgument.Evaluatable.new(evaluator, arguments)
 	self.add(ArgumentNode.new(ConditionArgument.new(condition, optional)))
 	return self

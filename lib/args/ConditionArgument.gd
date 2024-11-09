@@ -23,16 +23,26 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	return []
 
 func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
-	return CommandLexer.LexPrefix.new(condition.evaluate(), "")
+	return CommandLexer.LexPrefix.new(condition.evaluate(_tag_map), "")
+
+var _tag_map : Dictionary = {} #[Variant, CommandLexer.Token]
+func update_arguments(_new_argument_map : Dictionary) -> void:
+	_tag_map = _new_argument_map
 
 class Evaluatable extends RefCounted:
 	var evaluator : Callable
+	var arguments : Array[Variant]
 
-	func _init(_evaluator : Callable) -> void:
+	func _init(_evaluator : Callable, _arguments : Array[Variant]) -> void:
 		evaluator = _evaluator
+		arguments = _arguments
 
 	func _to_string() -> String:
 		return "%s" % [evaluator.get_method()]
 
-	func evaluate() -> bool:
-		return evaluator.call()
+	func evaluate(_argument_map : Dictionary) -> bool:
+		var mapped_arguments : Array[Variant] = arguments.map(
+			func(arg : Variant) -> Variant:
+				return CommandServer._parse_argument_against_tagmap(arg, _argument_map)
+		)
+		return evaluator.callv(mapped_arguments)
