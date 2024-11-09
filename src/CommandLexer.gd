@@ -11,6 +11,7 @@ static func tokenize_input(input : String) -> LexTreeNode:
 static func _tokenize(
 		_input : String, 
 		_working_node : ArgumentNode = CommandServer.argument_graph,
+		_tag_map : Dictionary = {},
 		_colored_arg_count : int = 0
 	) -> LexTreeNode:
 	
@@ -40,6 +41,9 @@ static func _tokenize(
 		_input
 	)
 
+	if argument is ConditionArgument:
+		argument.update_arguments(_tag_map)
+
 	var treenode : LexTreeNode = LexTreeNode.new(token)
 	var satisfying_prefix : LexPrefix = argument.get_satisfying_prefix(_input)
 	var prefix_content : String = satisfying_prefix.content
@@ -49,13 +53,17 @@ static func _tokenize(
 		CommandTerminalLogger.log(3, ["COMMAND","TOKENIZE"], "'%s' accepted." % [prefix_content])
 		trimmed_input = _input.substr(prefix_content.length())
 		token.content = prefix_content
+
+		if _working_node.argument.tag != null:
+			_tag_map[_working_node.argument.tag.name] = token
+
 		if _working_node.argument is ValidatedArgument or _working_node.argument is KeyArgument:
 			_colored_arg_count += 1
 			token.color = _COLORED_ARGS_COLOR_LIST[_colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
 
 		if trimmed_input.length() > 0 or _working_node.argument is ConditionArgument:
 			for child : ArgumentNode in _working_node.children:
-				var child_node : LexTreeNode = _tokenize(trimmed_input.trim_prefix(" "), child, _colored_arg_count)
+				var child_node : LexTreeNode = _tokenize(trimmed_input.trim_prefix(" "), child, _tag_map, _colored_arg_count)
 				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
 					treenode.children.push_back(child_node)
 			if _working_node.children.size() == 0:
