@@ -55,7 +55,7 @@ static func _tokenize(
 
 		if trimmed_input.length() > 0 or _working_node.argument is ConditionArgument:
 			for child : ArgumentNode in _working_node.children:
-				var child_node : LexTreeNode = _tokenize(trimmed_input.substr(1), child, _colored_arg_count)
+				var child_node : LexTreeNode = _tokenize(trimmed_input.trim_prefix(" "), child, _colored_arg_count)
 				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
 					treenode.children.push_back(child_node)
 			if _working_node.children.size() == 0:

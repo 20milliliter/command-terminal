@@ -43,7 +43,9 @@ func _paint_terminal_text(text : String) -> String:
 	CommandLexer._print_tree(working_tree_node)
 	while working_tree_node.children.size() > 0:
 		working_tree_node = working_tree_node.children[0]
-		paints.append(_paint_token(working_tree_node.token))
+		var painted : String = _paint_token(working_tree_node.token)
+		if painted.is_empty(): continue
+		paints.append(painted)
 	CommandTerminalLogger.log(3, ["TERMINAL","PAINTING"], "Output: '%s'." % [paints]) 
 	var output : String = " ".join(paints)
 	return output
@@ -51,6 +53,7 @@ func _paint_terminal_text(text : String) -> String:
 func _paint_token(token : CommandLexer.Token) -> String:
 	var result : String = "[color=%s]%s[/color]" % [token.get_color_as_hex(), token.content]
 	CommandTerminalLogger.log(3, ["TERMINAL","PAINTING"], "Token: '%s'." % [result]) 
+	if token.content.is_empty(): return ""
 	return result
 
 func append_autocomplete_suggestion() -> void:
