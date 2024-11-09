@@ -17,7 +17,7 @@ func _ready() -> void:
 			terminal_rich_label.text = _paint_terminal_text(t)
 			contents_altered.emit(t)
 			append_autocomplete_suggestion.call_deferred()
-			pre_autocompleteed_text = t
+			pre_autocompleted_text = t
 	)
 	terminal_line_edit.text_submitted.connect(
 		func(t : String) -> void: 
@@ -67,14 +67,14 @@ func append_autocomplete_suggestion() -> void:
 	terminal_rich_label.append_text(remaining_arg_text)
 	terminal_rich_label.pop()
 
-var pre_autocompleteed_text : String = ""
+var pre_autocompleted_text : String = ""
 func autocomplete_text(argument : String) -> void:
-	var complete_args : Array[String] = command_terminal_guts.get_all_complete_args(pre_autocompleteed_text)
-	var autocompleteed : String = " ".join(complete_args + [argument])
-	CommandTerminalLogger.log(2, ["TERMINAL", "AUTOCOMPLETE"], "Autocompleteed '%s'." % [autocompleteed])
-	terminal_rich_label.text = _paint_terminal_text(autocompleteed)
-	terminal_line_edit.text = autocompleteed
-	terminal_line_edit.caret_column = autocompleteed.length()
+	var complete_args : Array[String] = command_terminal_guts.get_all_complete_args(pre_autocompleted_text)
+	var autocompleted : String = " ".join(complete_args + [argument])
+	CommandTerminalLogger.log(2, ["TERMINAL", "AUTOCOMPLETE"], "Autocompleted '%s'." % [autocompleted])
+	terminal_rich_label.text = _paint_terminal_text(autocompleted)
+	terminal_line_edit.text = autocompleted
+	terminal_line_edit.caret_column = autocompleted.length()
 	
 func _input(event : InputEvent) -> void:
 	if not terminal_line_edit.has_focus(): return
