@@ -53,7 +53,7 @@ static func _tokenize(
 			_colored_arg_count += 1
 			token.color = _COLORED_ARGS_COLOR_LIST[_colored_arg_count % _COLORED_ARGS_COLOR_LIST.size()]
 
-		if trimmed_input.length() > 0:
+		if trimmed_input.length() > 0 or _working_node.argument is ConditionArgument:
 			for child : ArgumentNode in _working_node.children:
 				var child_node : LexTreeNode = _tokenize(trimmed_input.substr(1), child, _colored_arg_count)
 				if (not child_node.token is LeftoverToken) or treenode.children.size() == 0:
