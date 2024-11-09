@@ -126,6 +126,56 @@ CommandBuilder.new().Literal("teleport")
 .Build()
 ```
 
+## Condition
+`Condition()` adds a `ConditionArgument` to the command. A `ConditionArgument` is an argument encapsulating an `evaluator : Callable` that determines if the argument is valid, instead of anything directly related to command contents itself. An `arguments : Array[Variant]` may also be provided, which will be parsed for `Tags`, then passed to the evaluator when it is invoked.
+
+If combined with branching, they can allow for commands which can automatically, dynamically alter their structure based on external state.
+
+>[!NOTE]
+> The reason for this is that any `Argument` which is a descendant of a `ConditionArgument` will only be navigable if the `ConditionArgument` is valid (as this is the way all arguments function).
+
+>[!TIP]
+> If an "expression" of multiple conditions is required, branching can be used to create it:
+>
+> ```gdscript
+> CommandBuilder.new()
+>     #...
+>         .Branch()
+>             .Condition(A).Condition(B)
+>         .NextBranch()
+>             .Condition(C)
+>         .EndBranch()
+>         .Literal("foo") # Only accessible if (A * B) + C == true
+>     #...
+> .Build()
+> ```
+
+### Examples
+
+```gdscript
+# player weapon primary set <weapon_name>
+# player weapon primary edit (damage|range) <value>
+CommandBuilder.new()
+    .Literal("player").Literal("weapon").Literal("primary")
+    .Branch()
+        .Literal("set")
+        .Key("weapon_name", get_weapon_names).Tag_gnst()
+        .Callback(set_player_primary_weapon, ["weapon_name"])
+    .NextBranch()
+        # If the player has no primary weapon, editing it is not possible.
+        .Condition(player_has_primary_weapon).Literal("edit")
+        .Branch()
+            .Literal("damage").Tag_st("weapon_property")
+            .Validated("value", is_valid_float_positive).Tag_gn("int")
+        .NextBranch()
+            .Literal("range").Tag_st("weapon_property")
+            .Validated("value", is_valid_float_positive).Tag_gn("float")
+        .EndBranch()
+        .Callback(edit_player_primary_weapon_property, ["weapon_property", "value"])
+    .EndBranch()
+.Build()
+```
+
 ## Variadic
 
 `Variadic()` adds a `VariadicArgument` to the command. A `VariadicArgument` is an argument that represents the command accepting any number of extra arguments at it's end.

@@ -26,6 +26,7 @@ For arguments, a method exists for each argument type which adds a new argument 
 - `Literal()`
 - `Key()`
 - `Validated()`
+- `Condition()`
 - `Variatic()`
 
 Information about argument types, with examples, can be found [here](Arguments.md).
