@@ -41,6 +41,7 @@ func get_all_complete_args(text : String) -> Array[String]:
 	while working_token_node.children.size() > 0:
 		working_token_node = working_token_node.children[0]
 		if not working_token_node.token is CommandLexer.CommandToken: continue
+		if working_token_node.token.content.is_empty(): continue
 		if not working_token_node.token.provided_autocomplete_entries.is_empty(): break
 		args.push_back(working_token_node.token.content)
 	CommandTerminalLogger.log(3, ["TERMINAL"], "Returning: %s" % [args])

@@ -36,6 +36,12 @@ func Validated(key : StringName, validator : Callable, default : Variant = "") -
 	self.add(ArgumentNode.new(ValidatedArgument.new(key, validator, optional, default)))
 	return self
 
+## Adds a [ConditionArgument] to the command.
+func Condition(evaluator : Callable, arguments : Array[Variant] = []) -> CommandBuilder:
+	var condition : ConditionArgument.Evaluatable = ConditionArgument.Evaluatable.new(evaluator, arguments)
+	self.add(ArgumentNode.new(ConditionArgument.new(condition, optional)))
+	return self
+
 ## Adds a [VariadicArgument] to the command.
 func Variadic() -> CommandBuilder:
 	self.add(ArgumentNode.new(VariadicArgument.new()))

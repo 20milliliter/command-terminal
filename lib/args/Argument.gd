@@ -29,6 +29,6 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	assert(false, "'get_autocomplete_entries()' called on Argument that does not implement it.")
 	return []
 
-func get_satisfying_prefix(_remaining_input : String) -> String:
+func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	assert(false, "'get_satisfying_prefix()' called on Argument that does not implement it.")
-	return ""
+	return CommandLexer.LexPrefix.new(false)

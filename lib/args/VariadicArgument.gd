@@ -22,5 +22,5 @@ func get_autocomplete_content() -> String:
 func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	return [str(self)]
 
-func get_satisfying_prefix(_remaining_input : String) -> String:
-	return ""
+func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
+	return CommandLexer.LexPrefix.new(true)

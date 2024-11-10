@@ -27,7 +27,7 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 		return [literal]
 	return []
 
-func get_satisfying_prefix(_remaining_input : String) -> String:
+func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	if _remaining_input.begins_with(literal + " "):
-		return literal
-	return ""
+		return CommandLexer.LexPrefix.new(true, literal)
+	return CommandLexer.LexPrefix.new(false)
