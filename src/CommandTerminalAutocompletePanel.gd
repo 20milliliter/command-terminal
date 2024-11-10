@@ -87,15 +87,15 @@ func update_autocomplete_position_and_size(line_edit_contents : String) -> void:
 		command_line_font_size
 	).x
 	
-	var panel_size : Vector2 = command_line_font.get_multiline_string_size(
+	var approx_panel_size : Vector2 = command_line_font.get_multiline_string_size(
 		autocomplete_rich_label.get_parsed_text(), 
 		HORIZONTAL_ALIGNMENT_LEFT, 
 		-1, 
 		command_line_font_size
 	) + Vector2(margins, margins)
 
-	self.size = panel_size
+	self.size = Vector2(0, approx_panel_size.y)
 	self.position = Vector2(
 		px_to_pad,
-		-panel_size.y
+		-approx_panel_size.y
 	)
