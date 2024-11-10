@@ -82,7 +82,8 @@ func run_command(command : String) -> void:
 				callback_arguments.append(argument)
 	else:
 		CommandTerminalLogger.log(3, ["COMMAND"], "No callback arguments requested.")
-	
+
+	CommandTerminalLogger.log(3, ["COMMAND"], "Calling Callback %s with args %s..." % [callback, callback_arguments])
 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
 	callback.callv(callback_arguments)
 
