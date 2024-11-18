@@ -53,6 +53,7 @@ func Variadic() -> CommandBuilder:
 func Branch() -> CommandBuilder:
 	CommandTerminalLogger.log(2, ["COMMAND", "BUILDER"], "Branching...")
 	branch_stack.push_back(upcoming_parents)
+	#branch_leaves_stack.push_back(upcoming_parents)
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Updated Branch stack: %s" % [branch_stack])
 	return self
 
@@ -70,15 +71,17 @@ func NextBranch() -> CommandBuilder:
 
 ## Signals to end the current branch. If any other arguments are added, they will follow the end of every branch. 
 func EndBranch() -> CommandBuilder:
-	CommandTerminalLogger.log(2, ["COMMAND", "BUILDER"], "Ended current branch.")
+	CommandTerminalLogger.log(2, ["COMMAND", "BUILDER"], "Ending current branch...")
 	var branch_leaves : Variant = branch_leaves_stack.pop_back()
+	var branch_origin : Variant = branch_stack.pop_back()
 	if branch_leaves == null:
-		push_error("CommandBuilder Error: Tried to end a branch without starting one.")
-		return self
-	var old_parents : Array[ArgumentNode] = branch_leaves
-	upcoming_parents += old_parents
-	branch_stack.pop_back()
-	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
+		if branch_origin == null:
+			push_error("CommandBuilder Error: Tried to end a branch without starting one.")
+			return self
+	else:
+		upcoming_parents += branch_leaves
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled branch leaf upcoming parents: %s" % [branch_leaves])
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Total upcoming parents: %s" % [upcoming_parents])
 	return self
 
 func _bad_tag_target() -> bool:
