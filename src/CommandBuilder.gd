@@ -71,10 +71,11 @@ func NextBranch() -> CommandBuilder:
 ## Signals to end the current branch. If any other arguments are added, they will follow the end of every branch. 
 func EndBranch() -> CommandBuilder:
 	CommandTerminalLogger.log(2, ["COMMAND", "BUILDER"], "Ended current branch.")
-	var old_parents : Array[ArgumentNode] = branch_leaves_stack.pop_back()
-	if old_parents == null:
+	var branch_leaves : Variant = branch_leaves_stack.pop_back()
+	if branch_leaves == null:
 		push_error("CommandBuilder Error: Tried to end a branch without starting one.")
 		return self
+	var old_parents : Array[ArgumentNode] = branch_leaves
 	upcoming_parents += old_parents
 	branch_stack.pop_back()
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
