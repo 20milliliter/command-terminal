@@ -30,10 +30,25 @@ func _is_equal(argument : Argument) -> bool:
 	if not argument.name == name: return false
 	if not argument.keys_provider == keys_provider: return false
 	return true
+
+func _keys_or_err() -> Variant:
+	if keys_provider.is_null():
+		push_error("Malformed keys_provider for KeyArgument%s, does not exist." % [self])
+		return ERR_DOES_NOT_EXIST
+	if keys_provider.is_valid():
+		push_error("Malformed keys_provider for KeyArgument%s, is not valid." % [self])
+		return ERR_INVALID_DECLARATION
+	var keys_provider_output : Variant = keys_provider.call()
+	if not keys_provider_output is Array[StringName]: 
+		push_error("Malformed keys_provider for KeyArgument%s, does not return an Array[StringName]." % [self])
+		return ERR_INVALID_DATA
+	return keys_provider_output
 		
 func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	var keys : Array[StringName] = []
-	keys.assign(keys_provider.call())
+	var keys_provider_output : Variant = _keys_or_err()
+	if keys_provider_output is Error: return []
+	keys.assign(keys_provider_output)
 	var candidate_keys : Array[String] = []
 	for key : StringName in keys:
 		if key.begins_with(_remaining_input):
@@ -42,7 +57,9 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 
 func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	var keys : Array[StringName] = []
-	keys.assign(keys_provider.call())
+	var keys_provider_output : Variant = _keys_or_err()
+	if keys_provider_output is Error: return CommandLexer.LexPrefix.new(false)
+	keys.assign(keys_provider_output)
 	for key : StringName in keys:
 		if _remaining_input.begins_with(key + " "):
 			return CommandLexer.LexPrefix.new(true, key)

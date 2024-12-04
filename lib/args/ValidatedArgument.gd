@@ -40,6 +40,19 @@ func _is_equal(argument : Argument) -> bool:
 func get_autocomplete_content() -> String:
 	return default_value
 
+func _valid_or_err() -> Variant:
+	if validator.is_null():
+		push_error("Malformed validator for ValidatedArgument%s, does not exist." % [self])
+		return ERR_DOES_NOT_EXIST
+	if validator.is_valid():
+		push_error("Malformed validator for ValidatedArgument%s, is not valid." % [self])
+		return ERR_INVALID_DECLARATION
+	var validator_output : Variant = validator.call()
+	if not validator_output is bool: 
+		push_error("Malformed validator for ValidatedArgument%s, does not return a bool." % [self])
+		return ERR_INVALID_DATA
+	return validator_output
+
 func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 	if get_satisfying_prefix(_remaining_input).content != "" or _remaining_input == "":
 		return [str(self)]
@@ -47,7 +60,9 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 
 func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	var next : String = _remaining_input.get_slice(" ", 0)
-	var next_is_valid : bool = validator.call(next)
-	if next_is_valid:
-		return CommandLexer.LexPrefix.new(true, next)
+	var validator_output : Variant = _valid_or_err()
+	if not validator_output is Error:
+		var next_is_valid : bool = validator_output as bool
+		if next_is_valid:
+			return CommandLexer.LexPrefix.new(true, next)
 	return CommandLexer.LexPrefix.new(false)
