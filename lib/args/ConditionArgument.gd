@@ -38,11 +38,27 @@ class Evaluatable extends RefCounted:
 		arguments = _arguments
 
 	func _to_string() -> String:
-		return "%s" % [evaluator.get_method()]
+		return "{%s}" % [evaluator.get_method()]
+
+	func _evaluated_or_err(mapped_arguments : Array[Variant]) -> Variant:
+		if evaluator.is_null():
+			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, does not exist." % [self])
+			return ERR_DOES_NOT_EXIST
+		if evaluator.is_valid():
+			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, is not valid." % [self])
+			return ERR_INVALID_DECLARATION
+		var result : Variant = evaluator.callv(mapped_arguments)
+		if not result is bool:
+			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, does not return a bool." % [self])
+			return ERR_INVALID_DATA
+		return result
 
 	func evaluate(_argument_map : Dictionary) -> bool:
 		var mapped_arguments : Array[Variant] = arguments.map(
 			func(arg : Variant) -> Variant:
 				return CommandServer._parse_argument_against_tagmap(arg, _argument_map)
 		)
-		return evaluator.callv(mapped_arguments)
+		var result : Variant = _evaluated_or_err(mapped_arguments)
+		if result is Error: return false
+		return result
+			
