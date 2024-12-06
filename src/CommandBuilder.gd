@@ -85,10 +85,7 @@ func EndBranch() -> CommandBuilder:
 	return self
 
 func _bad_tag_target() -> bool:
-	if upcoming_parents.size() > 1: 
-		CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "WARNING: Cannot tag the end of a branch. Tag not applied.")
-		return true
-	elif upcoming_parents.is_empty():
+	if upcoming_parents.is_empty():
 		CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "WARNING: Must tag an arg, not nothing. Tag not applied.")
 		return true
 	return false
@@ -96,7 +93,8 @@ func _bad_tag_target() -> bool:
 ## Tags the previous argument.
 func Tag(name : StringName, type : StringName, parser : Callable = Callable()) -> CommandBuilder:
 	if _bad_tag_target(): return self
-	upcoming_parents[0].argument.tag = ArgumentTag.new(name, type, parser)
+	for node : ArgumentNode in upcoming_parents:
+		node.argument.tag = ArgumentTag.new(name, type, parser)
 	return self
 
 ## Tags the previous argument, assuming the tag name as the argument's "given name".
