@@ -65,8 +65,9 @@ func NextBranch() -> CommandBuilder:
 		branch_leaves = branch_leaves_stack.pop_back()
 	branch_leaves.append_array(upcoming_parents)
 	branch_leaves_stack.push_back(branch_leaves)
-	upcoming_parents = branch_stack.back()
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Updated BranchLeaves stack: %s" % [branch_leaves_stack.back()])
+	upcoming_parents = branch_stack.back()
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled upcoming parents: %s" % [upcoming_parents])
 	return self
 
 ## Signals to end the current branch. If any other arguments are added, they will follow the end of every branch. 
@@ -80,7 +81,7 @@ func EndBranch() -> CommandBuilder:
 			return self
 	else:
 		upcoming_parents += branch_leaves
-	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled branch leaf upcoming parents: %s" % [branch_leaves])
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Recalled branch leaves: %s" % [branch_leaves])
 	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Total upcoming parents: %s" % [upcoming_parents])
 	return self
 
@@ -140,6 +141,8 @@ func Optional() -> CommandBuilder:
 ## Returns the built ArgumentGraph.
 ## Doing anything with this except immediately giving it to [method CommandServer.register_command] is not recommended.
 func Build() -> ArgumentGraph:
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Building command...")
+	CommandTerminalLogger.log(3, ["COMMAND", "BUILDER"], "Built command: %s" % [root.print_node()])
 	return root
 
 func _build_deroot() -> ArgumentNode:
