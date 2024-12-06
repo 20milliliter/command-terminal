@@ -44,9 +44,6 @@ class Evaluatable extends RefCounted:
 		if evaluator.is_null():
 			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, does not exist." % [self])
 			return ERR_DOES_NOT_EXIST
-		if evaluator.is_valid():
-			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, is not valid." % [self])
-			return ERR_INVALID_DECLARATION
 		var result : Variant = evaluator.callv(mapped_arguments)
 		if not result is bool:
 			push_error("Malformed evaluator for ConditionArgument Evaluatable%s, does not return a bool." % [self])

@@ -35,9 +35,6 @@ func _keys_or_err() -> Variant:
 	if keys_provider.is_null():
 		push_error("Malformed keys_provider for KeyArgument%s, does not exist." % [self])
 		return ERR_DOES_NOT_EXIST
-	if keys_provider.is_valid():
-		push_error("Malformed keys_provider for KeyArgument%s, is not valid." % [self])
-		return ERR_INVALID_DECLARATION
 	var keys_provider_output : Variant = keys_provider.call()
 	if not keys_provider_output is Array[StringName]: 
 		push_error("Malformed keys_provider for KeyArgument%s, does not return an Array[StringName]." % [self])
