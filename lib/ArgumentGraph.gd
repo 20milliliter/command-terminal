@@ -17,13 +17,17 @@ func merge(source_tree : ArgumentGraph) -> void:
 	CommandTerminalLogger.log(3, ["COMMAND"], "Result:\n" + self.print_node())
 
 func merge_node(source_node: ArgumentNode, target_node : ArgumentNode = self) -> void:
-	for source_child : ArgumentNode in source_node.children:
+	CommandTerminalLogger.log(3, ["COMMAND"], "Merging node: %s" % [source_node])
+	CommandTerminalLogger.log(3, ["COMMAND"], "Iterating node children: %s" % [source_node.children])
+		CommandTerminalLogger.log(3, ["COMMAND"], "Checking node: %s" % [source_child])
 		var needs_reparent : bool = true
 		for target_child : ArgumentNode in target_node.children:
 			if source_child.is_equal(target_child):
+				CommandTerminalLogger.log(3, ["COMMAND"], "Target already has node, descending to %s" % [source_child])
 				merge_node(source_child, target_child)
 				needs_reparent = false
 		if needs_reparent:
+			CommandTerminalLogger.log(3, ["COMMAND"], "Reparenting %s to %s." % [source_child, target_node])
 			source_child.reparent([target_node])
 
 func print_node_as_single() -> String:
