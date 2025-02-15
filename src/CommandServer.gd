@@ -40,7 +40,7 @@ func run_command(command : String) -> void:
 				CommandTerminalLogger.log(3, ["COMMAND"], "Found arg '%s' with tag '%s'." % [working_tokennode.token.name, arg_node.argument.tag.name])
 				tag_map[arg_node.argument.tag.name] = working_tokennode.token
 		if working_tokennode.children.size() == 0: break
-		working_tokennode = working_tokennode.children.front()
+		working_tokennode = _find_prefered_navigable_child(working_tokennode)
 
 	if most_recent_callback_holder == null:
 		CommandTerminalLogger.log(3, ["COMMAND"], "No callback found. Command is invalid.")
@@ -59,6 +59,21 @@ func run_command(command : String) -> void:
 	CommandTerminalLogger.log(3, ["COMMAND"], "Calling Callback %s with args %s..." % [callback, callback_arguments])
 	CommandTerminalLogger.log(2, ["COMMAND"], "Executing command...")
 	callback.callv(callback_arguments)
+
+func _find_prefered_navigable_child(node : CommandLexer.LexTreeNode) -> CommandLexer.LexTreeNode:
+	var node_children : Array[CommandLexer.LexTreeNode] = node.children
+	if node_children.size() == 0:
+		return null
+	elif node_children.size() > 1:
+		CommandTerminalLogger.log(3, ["COMMAND"], "Multiple navigable children. Finding best...")
+		node_children.sort_custom(_sort_pnaltn)
+	return node_children.front()
+
+func _sort_pnaltn(a : CommandLexer.LexTreeNode, b : CommandLexer.LexTreeNode) -> bool:
+	var arg_type_preference : Array[StringName] = ["ConditionArgument", "LiteralArgument", "KeyArgument", "ValidatedArgument", "VariadicArgument"]
+	var a_score : int = arg_type_preference.find(a.token.node.argument.get_script().get_global_name())
+	var b_score : int = arg_type_preference.find(b.token.node.argument.get_script().get_global_name())
+	return a_score < b_score
 
 func _parse_argument_against_tagmap(argument : Variant, tag_map : Dictionary) -> Variant:
 	CommandTerminalLogger.log(3, ["COMMAND", "PARSE"], "Parsing argument '%s'." % [argument])

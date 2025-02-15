@@ -31,7 +31,9 @@ func _fetch_autocomplete_entries(_token_tree_node : CommandLexer.LexTreeNode) ->
 		for entry : String in _token_tree_node.token.provided_autocomplete_entries:
 			autocomplete_entries.append(entry)
 			autocomplete_entry_owners.append(_token_tree_node.token.argument)
-	for child : CommandLexer.LexTreeNode in _token_tree_node.children:
+	var children : Array[CommandLexer.LexTreeNode] = _token_tree_node.children.duplicate()
+	children.sort_custom(CommandServer._sort_pnaltn)
+	for child : CommandLexer.LexTreeNode in children:
 		_fetch_autocomplete_entries(child)
 
 var autocomplete_selected_index : int = 0
