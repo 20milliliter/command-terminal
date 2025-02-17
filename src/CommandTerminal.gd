@@ -42,7 +42,6 @@ func _first_time_setup() -> void:
 	guts.set_owner(get_tree().get_edited_scene_root())
 
 	guts.set_anchors_and_offsets_preset.call_deferred(PRESET_FULL_RECT)
-	self.set_anchors_and_offsets_preset.call_deferred(PRESET_BOTTOM_WIDE)
 
 func _handle_functions() -> void:
 	var terminal_line_edit = guts.find_child("TERMINAL-LINE-EDIT", true, false)
