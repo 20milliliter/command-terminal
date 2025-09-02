@@ -1,6 +1,6 @@
 # command-terminal
 
-CommandTerminal is a GDScript addon for Godot 4 that manages a developer-created Command Line, with the goal of providing flexible commands, with direct but safe interaction with business logic, through readable command declarations.
+CommandTerminal is an addon for Godot 4.x that manages a developer-created, hierarchical command system (think Minecraft), with the focus of providing flexible commands, with direct and type-safe interaction with business logic, through fairly readable declarations for commands.
 
 Features include:
 
@@ -10,10 +10,12 @@ Features include:
 
 ## Installation
 
-You can install the addon as a git submodule:
+You can install it via the Asset Library in the Godot Editor.
+
+Alternatively, you can install the addon as a git submodule:
 `git submodule add https://github.com/20milliliter/command-terminal.git ./addons/command-terminal`
 
-Alternatively, you can install it manually by downloading the zip.
+Finally, you can install it manually by downloading the zip.
 
 ## Overview
 
@@ -46,7 +48,7 @@ func register_commands() -> void:
     )
 ```
 
-The following code creates command "player set walk_speed <value>" to alter `WALK_SPEED`. Values inputted that are not positive integers are visibly flagged. Validated arguments supply their default value when autocompleteed.
+The following code creates command "player set walk_speed <value>" to alter `WALK_SPEED`. Values inputted that are not valid, positive floats are visibly flagged. Validated arguments include a default value which is supplied when autocompleteed.
 ```gdscript
 func register_commands() -> void:
     CommandServer.register_command(
