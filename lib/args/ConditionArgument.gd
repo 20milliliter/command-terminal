@@ -7,7 +7,7 @@ var condition : Evaluatable
 
 func _init(_condition : Evaluatable, _optional : bool = false) -> void:
 	condition = _condition
-	super(_optional)
+	optional = _optional
 
 func _to_string() -> String:
 	return "{%s}" % [condition]
@@ -25,8 +25,8 @@ func get_autocomplete_entries(_remaining_input : String) -> Array[String]:
 func get_satisfying_prefix(_remaining_input : String) -> CommandLexer.LexPrefix:
 	return CommandLexer.LexPrefix.new(condition.evaluate(_tag_map), "")
 
-var _tag_map : Dictionary = {} #[Variant, CommandLexer.Token]
-func update_arguments(_new_argument_map : Dictionary) -> void:
+var _tag_map : Dictionary[StringName, CommandLexer.Token] = {} 
+func update_arguments(_new_argument_map : Dictionary[StringName, CommandLexer.Token]) -> void:
 	_tag_map = _new_argument_map
 
 class Evaluatable extends RefCounted:
@@ -50,7 +50,7 @@ class Evaluatable extends RefCounted:
 			return ERR_INVALID_DATA
 		return result
 
-	func evaluate(_argument_map : Dictionary) -> bool:
+	func evaluate(_argument_map : Dictionary[StringName, CommandLexer.Token]) -> bool:
 		var mapped_arguments : Array[Variant] = arguments.map(
 			func(arg : Variant) -> Variant:
 				return CommandServer._parse_argument_against_tagmap(arg, _argument_map)

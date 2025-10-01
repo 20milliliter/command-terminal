@@ -11,7 +11,7 @@ static func tokenize_input(input : String) -> LexTreeNode:
 static func _tokenize(
 		_input : String, 
 		_working_node : ArgumentNode = CommandServer.argument_graph,
-		_tag_map : Dictionary = {},
+		_tag_map : Dictionary[StringName, CommandLexer.Token] = {},
 		_colored_arg_count : int = 0
 	) -> LexTreeNode:
 	

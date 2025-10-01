@@ -21,7 +21,7 @@ func _init(
 	name = _name
 	validator = _validator
 	default_value = str(_default_value)
-	super(_optional)
+	optional = _optional
 
 func _to_string() -> String:
 	return "<%s>" % [name]

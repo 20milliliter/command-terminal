@@ -15,7 +15,7 @@ var keys_provider : Callable
 func _init(_name : StringName, _keys_provider : Callable, _optional : bool = false) -> void:
 	name = _name
 	keys_provider = _keys_provider
-	super(_optional)
+	optional = _optional
 
 func _to_string() -> String:
 	return "<%s>" % [name]

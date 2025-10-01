@@ -1,6 +1,6 @@
 class_name CommandTerminalLogger
 
-const TAGS : Dictionary = {
+const TAGS : Dictionary[StringName, String] = {
 	"TAG" : "[color=gray][COMMAND-TERMINAL][/color]",
 	"PLUGIN" : "[color=gray][PLUGIN][/color]",
 	"COMMAND" : "[color=red][COMMAND][/color]",

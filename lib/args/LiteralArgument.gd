@@ -9,7 +9,7 @@ var literal : StringName
 
 func _init(_literal : StringName, _optional : bool = false) -> void:
 	literal = _literal.to_lower()
-	super(_optional)
+	optional = _optional
 
 func _to_string() -> String:
 	return "%s" % [literal]

@@ -5,7 +5,7 @@ extends PeculiarArgument
 ## A VariadicArgument is an argument that represents the command accepting any number of extra arguments at it's end.
 
 func _init() -> void:
-	super()
+	optional = false
 
 func _to_string() -> String:
 	return "..."

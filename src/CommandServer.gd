@@ -14,7 +14,7 @@ func register_command(command_graph : ArgumentGraph) -> void:
 	#if ArgumentGraphValidator.is_valid_graph(command_graph)
 	argument_graph.merge(command_graph)
 
-var parsers : Dictionary = {} #[StringName, Callable]
+var parsers : Dictionary[StringName, Callable] = {}
 ## Registers a new parser with the CommandServer. Takes a StringName of the type to parse and the callable to call.
 ## Provided callable should take only one argument, a String, and return type specified by `type`.
 func register_parser(type : StringName, parser : Callable) -> void:
@@ -27,7 +27,7 @@ func run_command(command : String) -> void:
 	var lextree : CommandLexer.LexTreeNode = CommandLexer.tokenize_input(command)
 
 	var most_recent_callback_holder : ArgumentNode = null
-	var tag_map : Dictionary = {} #[StringName, CommandLexer.Token] 
+	var tag_map : Dictionary[StringName, CommandLexer.Token] = {} #
 	var working_tokennode : CommandLexer.LexTreeNode = lextree
 	CommandTerminalLogger.log(3, ["COMMAND"], "Navigating lextree for callback and tagged args.")
 	while true:
