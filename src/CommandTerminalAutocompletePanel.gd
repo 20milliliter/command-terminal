@@ -14,27 +14,10 @@ func refresh_autocomplete_contents(new_text : String) -> void:
 	CommandTerminalLogger.log(3, ["AUTOCOMPLETE"], "Getting autocomplete options for '%s'..." % [new_text])
 	fetch_autocomplete_entries(new_text)
 	CommandTerminalLogger.log(3, ["AUTOCOMPLETE"], "Fetched: %s" % [autocomplete_entries])
-	autocomplete_selected_index = -1
+	autocomplete_selected_index = 0
 	redraw_autocomplete_contents(new_text)
 
-var autocomplete_entries : Array[String] = []
-var autocomplete_entry_owners : Array[Argument] = []
-func fetch_autocomplete_entries(new_text : String) -> void:
-	var lextreeroot : CommandLexer.LexTreeNode = command_terminal_guts.tokenizer_cache(new_text)
-	autocomplete_entries.clear()
-	autocomplete_entry_owners.clear()
-	_fetch_autocomplete_entries(lextreeroot)
 
-func _fetch_autocomplete_entries(_token_tree_node : CommandLexer.LexTreeNode) -> void:
-	if _token_tree_node == null: return
-	if _token_tree_node.token is CommandLexer.CommandToken:
-		for entry : String in _token_tree_node.token.provided_autocomplete_entries:
-			autocomplete_entries.append(entry)
-			autocomplete_entry_owners.append(_token_tree_node.token.argument)
-	var children : Array[CommandLexer.LexTreeNode] = _token_tree_node.children.duplicate()
-	children.sort_custom(CommandServer._sort_pnaltn)
-	for child : CommandLexer.LexTreeNode in children:
-		_fetch_autocomplete_entries(child)
 
 var autocomplete_selected_index : int = 0
 func advance_autocomplete_index() -> void: _change_autocomplete_index(true)
